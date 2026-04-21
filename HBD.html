@@ -782,7 +782,7 @@
         /* 🎬 Enhanced Photo Slideshow */
         .slideshow-section {
             margin: 30px auto;
-            padding: 25px 0;
+            padding: 30px 0;
             text-align: center;
         }
 
@@ -1088,15 +1088,35 @@
             animation: girlBounce 0.5s ease-in-out infinite alternate;
         }
 
+        /* 📱 Responsive Design สำหรับทุกอุปกรณ์ */
+        @media (max-width: 768px) {
+            .container {
+                max-width: 90%;
+            }
+
+            .cake-container {
+                transform: scale(0.9);
+            }
+
+            .timer-box {
+                min-width: 65px;
+                padding: 10px 5px;
+            }
+
+            .timer-value {
+                font-size: 1.5rem;
+            }
+        }
+
         @media (max-width: 480px) {
             .container {
-                padding: 30px 20px;
+                padding: 30px 15px;
                 margin: 10px auto;
                 max-width: 95%;
             }
 
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .gallery-grid {
@@ -1106,12 +1126,12 @@
 
             .slideshow-container {
                 height: 250px;
-                max-width: 300px;
+                max-width: 100%;
             }
 
             .photo-frame {
-                width: 160px;
-                height: 160px;
+                width: 150px;
+                height: 150px;
             }
 
             .cake-container {
@@ -1149,11 +1169,11 @@
 
             .click-hint {
                 top: -90px;
-                padding: 15px 25px;
+                padding: 10px 20px;
             }
 
             .click-hint-text {
-                font-size: 1.2rem;
+                font-size: 1rem;
             }
 
             .walking-girl {
@@ -1169,8 +1189,13 @@
                 font-size: 1.6rem;
             }
 
+            .timer-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
             .timer-value {
-                font-size: 1.4rem;
+                font-size: 1.5rem;
             }
 
             .gallery-title {
@@ -1180,6 +1205,120 @@
             .girl-face {
                 width: 50px;
                 height: 50px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .photo-frame {
+                width: 120px;
+                height: 120px;
+            }
+
+            .cake-container {
+                width: 220px;
+                height: 320px;
+            }
+
+            .cake-layer-1 {
+                width: 150px;
+                height: 60px;
+            }
+
+            .cake-layer-2 {
+                width: 120px;
+                height: 50px;
+                bottom: 60px;
+            }
+
+            .cake-layer-3 {
+                width: 90px;
+                height: 45px;
+                bottom: 110px;
+            }
+
+            .cake-layer-4 {
+                width: 60px;
+                height: 35px;
+                bottom: 155px;
+            }
+
+            .candle {
+                bottom: 190px;
+                height: 35px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-grid {
+                gap: 10px;
+            }
+
+            .timer-value {
+                font-size: 1.3rem;
+            }
+
+            .slideshow-container {
+                height: 200px;
+            }
+        }
+
+        /*ส่วนที่ทำการปรับแต่งปุ่มของลิ้ง*/
+        .btn-pill {
+            /* พื้นหลังสีชมพูแดง */
+            background-color: #ff5e6c;
+            color: white;
+
+            /* ทรงปุ่มมนยาว */
+            padding: 12px 35px;
+            border-radius: 50px;
+
+            /* จัดตำแหน่งไอคอนและข้อความ */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            /* จัดให้อยู่กลางปุ่ม */
+            gap: 10px;
+
+            /* ตกแต่งพื้นฐาน */
+            text-decoration: none;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            font-size: 18px;
+            /* ขนาดตัวอักษรบนคอม */
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+
+            /* ป้องกันปุ่มเบี้ยวบนมือถือ */
+            white-space: nowrap;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* เอฟเฟกต์เมื่อวางเมาส์ */
+        .btn-pill:hover {
+            background-color: #ff4050;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 94, 108, 0.4);
+        }
+
+        /* ===== ส่วนของ Responsive (สำหรับมือถือ) ===== */
+        @media (max-width: 480px) {
+            .btn-pill {
+                padding: 10px 25px;
+                /* ลดระยะห่างขอบลง */
+                font-size: 15px;
+                /* ลดขนาดตัวอักษรลง */
+                gap: 8px;
+                /* ลดระยะห่างไอคอน */
+                width: auto;
+                /* ให้กว้างตามเนื้อหา หรือเปลี่ยนเป็น 100% ถ้าอยากให้เต็มจอ */
             }
         }
     </style>
@@ -1233,7 +1372,8 @@
     <!-- Main Card -->
     <div class="container" id="main-card">
         <div class="photo-frame">
-            <img src="https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing1.jpg" alt="Birthday Girl" id="main-photo">
+            <img src="https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing1.jpg" alt="Birthday Girl"
+                id="main-photo">
         </div>
 
         <h1>Happy Birthday! 🎂</h1>
@@ -1291,8 +1431,16 @@
             ขอให้มีความสุขมากๆ นะครับ 🌸<br>
             สวยวันสวยคืน รวยๆ เฮงๆ 💰<br>
             สู้ๆ กับทุกความฝันนะ!<br>
-            รักนะจุ๊บๆ ❤️
+            ❤️<br>
+
+            <!-- ส่วนของปุ่ม -->
+            <a href="https://solar-gold-jo9avzx0oz.edgeone.app/ingff.jpg" class="btn-pill" target="_blank">
+                กดปุ่มเลยสิ!
+            </a>
+
+
         </p>
+
 
         <button class="music-btn" onclick="toggleMusic()">🎵 เปิดเพลง</button>
     </div>
@@ -1315,37 +1463,37 @@
             {
                 type: 'video',
                 src: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/vido/vido1.mp4',
-                poster: '',
+                poster: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing6.png',
                 likes: 15
             },
             {
                 type: 'video',
                 src: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/vido/vido2.mp4',
-                poster: '',
+                poster: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing6.png',
                 likes: 23
             },
             {
                 type: 'video',
                 src: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/vido/vido3.mp4', // เปลี่ยนเป็นลิงก์วิดีโอของคุณ
-                poster: '',
+                poster: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing6.png',
                 likes: 42
             },
             {
                 type: 'video',
                 src: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/vido/vido4.mp4',
-                poster: '',
+                poster: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing6.png',
                 likes: 18
             },
             {
                 type: 'video',
                 src: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/vido/vido5.mp4',
-                poster: '',
+                poster: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing6.png',
                 likes: 31
             },
             {
                 type: 'video',
                 src: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/vido/vido6.mp4', // เปลี่ยนเป็นลิงก์วิดีโอของคุณ
-                poster: '',
+                poster: 'https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing6.png',
                 likes: 99
             }
         ];
@@ -1556,14 +1704,21 @@
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing2.jpg",
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing3.jpg",
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing4.jpg",
-            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing5.png"
+            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing5.png",
+            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing7.png",
+            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing8.png",
+            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing9.png",
+            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing10.png",
+            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing11.png",
+            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/ing12.png"
+
         ];
 
         const slideshowImages = [
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/Screenshot1.png",
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/Screenshot2.png",
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/Screenshot3.png",
-            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/Screenshot4.png",  
+            "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/Screenshot4.png",
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/Screenshot5.png",
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/Screenshot6.png",
             "https://cdn.jsdelivr.net/gh/CIT006/flutter-api@main/ing/Screenshot11.png",
@@ -1584,7 +1739,7 @@
 
         function runPhotoEffect() {
             let count = 0;
-            const totalImages = images.length * 2;
+            const totalImages = images.length * 2; // แสดงแต่ละรูป 2 รอบ
 
             const interval = setInterval(() => {
                 createFlyingImage(images[count % images.length]);
@@ -1765,19 +1920,55 @@
             music.play().catch(e => console.log("Audio play blocked:", e));
         }
 
-        function toggleMusic() {
-            const music = document.getElementById('bg-music');
-            const btn = document.querySelector('.music-btn');
-            if (music.paused) {
-                music.play();
-                btn.textContent = '🔊 ปิดเพลง';
-                btn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
-            } else {
-                music.pause();
-                btn.textContent = '🎵 เปิดเพลง';
-                btn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
-            }
+        // 🎵 ฟังก์ชันหยุดเพลงเมื่อออกจากหน้าเว็บ
+function setupAudioCleanup() {
+    const music = document.getElementById('bg-music');
+    
+    // เมื่อสลับแท็บหรือย่อเบราว์เซอร์
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !music.paused) {
+            music.pause();
         }
+    });
+    
+    // เมื่อผู้ใช้กำลังจะปิดแท็บ/ออกจากหน้าเว็บ
+    window.addEventListener('beforeunload', function() {
+        if (!music.paused) {
+            music.pause();
+            music.currentTime = 0; // รีเซ็ตเพลงกลับจุดเริ่มต้น
+        }
+    });
+    
+    // เมื่อหน้าเว็บถูกซ่อนในประวัติ (เช่น กดปุ่มกลับ)
+    window.addEventListener('pagehide', function() {
+        if (!music.paused) {
+            music.pause();
+            music.currentTime = 0;
+        }
+    });
+    
+    // เมื่อผู้ใช้กดปุ่มหยุดเพลงเอง ให้รีเซ็ตตำแหน่งเพลงด้วย
+    const originalToggle = window.toggleMusic;
+    window.toggleMusic = function() {
+        if (music.paused) {
+            music.play();
+            document.querySelector('.music-btn').textContent = '🔊 ปิดเพลง';
+            document.querySelector('.music-btn').style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+        } else {
+            music.pause();
+            music.currentTime = 0; // รีเซ็ตเมื่อปิด
+            document.querySelector('.music-btn').textContent = '🎵 เปิดเพลง';
+            document.querySelector('.music-btn').style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
+        }
+    };
+}
+
+// เรียกใช้งานเมื่อหน้าเว็บโหลดเสร็จ
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupAudioCleanup);
+} else {
+    setupAudioCleanup();
+}
 
         function launchConfetti() {
             const duration = 4000;

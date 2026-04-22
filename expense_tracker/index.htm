@@ -2,919 +2,980 @@
 <html lang="th">
 
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>AI Dashboard บันทึกรายรับ-รายจ่าย</title>
- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/kanit@4.5.0/index.css">
- <style>
-  * {
-   font-family: 'Kanit', sans-serif;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Dashboard บันทึกรายรับ-รายจ่าย</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/kanit@4.5.0/index.css">
+  <style>
+    * {
+      font-family: 'Kanit', sans-serif;
+    }
 
-  .gradient-bg {
-   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
 
-  .card-shadow {
-   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  }
+    .card-shadow {
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
 
-  .animate-fade-in {
-   animation: fadeIn 0.3s ease-in;
-  }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
 
-  @keyframes fadeIn {
-   from {
-    opacity: 0;
-    transform: translateY(10px);
-   }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
 
-   to {
-    opacity: 1;
-    transform: translateY(0);
-   }
-  }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-  .transaction-item {
-   transition: all 0.2s ease;
-  }
+    .transaction-item {
+      transition: all 0.2s ease;
+    }
 
-  .transaction-item:hover {
-   transform: translateX(5px);
-  }
+    .transaction-item:hover {
+      transform: translateX(5px);
+    }
 
-  .income-text {
-   color: #10b981;
-  }
+    .income-text {
+      color: #10b981;
+    }
 
-  .expense-text {
-   color: #ef4444;
-  }
+    .expense-text {
+      color: #ef4444;
+    }
 
-  .ai-pulse {
-   animation: pulse 2s infinite;
-  }
+    .ai-pulse {
+      animation: pulse 2s infinite;
+    }
 
-  @keyframes pulse {
+    @keyframes pulse {
 
-   0%,
-   100% {
-    opacity: 1;
-   }
+      0%,
+      100% {
+        opacity: 1;
+      }
 
-   50% {
-    opacity: 0.6;
-   }
-  }
+      50% {
+        opacity: 0.6;
+      }
+    }
 
-  .glow-effect {
-   box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-  }
+    .glow-effect {
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
 
-  .nav-item {
-   transition: all 0.3s ease;
-  }
+    .nav-item {
+      transition: all 0.3s ease;
+    }
 
-  .nav-item.active {
-   background: rgba(255, 255, 255, 0.2);
-   transform: scale(1.05);
-  }
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
 
-  .stat-card {
-   transition: all 0.3s ease;
-  }
+    .stat-card {
+      transition: all 0.3s ease;
+    }
 
-  .stat-card:hover {
-   transform: translateY(-5px);
-  }
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
 
-  .progress-bar {
-   transition: width 1s ease-in-out;
-  }
+    .progress-bar {
+      transition: width 1s ease-in-out;
+    }
 
-  .tab-content {
-   display: none;
-  }
+    .tab-content {
+      display: none;
+    }
 
-  .tab-content.active {
-   display: block;
-  }
+    .tab-content.active {
+      display: block;
+    }
 
-  .container {
-   max-width: 1400px;
-  }
+    .container {
+      max-width: 1400px;
+    }
 
-  .chart-container {
-   position: relative;
-   height: 300px;
-  }
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
 
-  .loading-spinner {
-   border: 3px solid #f3f3f3;
-   border-top: 3px solid #667eea;
-   border-radius: 50%;
-   width: 40px;
-   height: 40px;
-   animation: spin 1s linear infinite;
-  }
+    .loading-spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
 
-  @keyframes spin {
-   0% {
-    transform: rotate(0deg);
-   }
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
 
-   100% {
-    transform: rotate(360deg);
-   }
-  }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
 
-  .ai-result-box {
-   display: none;
-  }
+    .ai-result-box {
+      display: none;
+    }
 
-  .ai-result-box.show {
-   display: block;
-  }
+    .ai-result-box.show {
+      display: block;
+    }
 
-  .filter-active {
-   background-color: rgb(243, 232, 255) !important;
-   color: rgb(147, 51, 234) !important;
-  }
+    .filter-active {
+      background-color: rgb(243, 232, 255) !important;
+      color: rgb(147, 51, 234) !important;
+    }
 
-  .select-custom {
-   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-   background-position: right 0.5rem center;
-   background-repeat: no-repeat;
-   background-size: 1.5em 1.5em;
-   padding-right: 2.5rem;
-  }
- </style>
+    .select-custom {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+      padding-right: 2.5rem;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen">
- <!-- Header -->
- <div class="gradient-bg pb-20">
-  <div class="container mx-auto px-4 pt-8">
-   <div class="flex items-center justify-center space-x-3 mb-4">
-    <img
-     src="https://image.qwenlm.ai/public_source/af25f9f9-b3ab-44d7-b78d-7286b1d4d221/16d27cd31-2574-4bac-afc6-afc30a0b3585.png"
-     alt="AI Icon" class="w-12 h-12">
-    <h1 class="text-3xl font-bold text-white">🤖 AI Dashboard การเงิน</h1>
-   </div>
-   <p class="text-white text-center opacity-80">วิเคราะห์และสรุปการเงินของคุณอย่างชาญฉลาด</p>
+  <!-- Header -->
+  <div class="gradient-bg pb-20">
+    <div class="container mx-auto px-4 pt-8">
+      <div class="flex items-center justify-center space-x-3 mb-4">
+        <img
+          src="https://image.qwenlm.ai/public_source/af25f9f9-b3ab-44d7-b78d-7286b1d4d221/16d27cd31-2574-4bac-afc6-afc30a0b3585.png"
+          alt="AI Icon" class="w-12 h-12">
+        <h1 class="text-3xl font-bold text-white">🤖 AI Dashboard การเงิน</h1>
+      </div>
+      <p class="text-white text-center opacity-80">วิเคราะห์และสรุปการเงินของคุณอย่างชาญฉลาด</p>
+    </div>
   </div>
- </div>
 
- <!-- Navigation Tabs -->
- <div class="container mx-auto px-4 -mt-12">
-  <div class="bg-white rounded-xl card-shadow p-2 mb-6">
-   <div class="flex justify-center space-x-2 flex-wrap">
-    <button onclick="switchTab('dashboard')" id="tab-dashboard"
-     class="nav-item active px-6 py-3 rounded-lg text-purple-600 font-medium">📊 Dashboard</button>
-    <button onclick="switchTab('transactions')" id="tab-transactions"
-     class="nav-item px-6 py-3 rounded-lg text-gray-600 font-medium">📝 รายการ</button>
-    <button onclick="switchTab('add')" id="tab-add" class="nav-item px-6 py-3 rounded-lg text-gray-600 font-medium">➕
-     เพิ่มรายการ</button>
-   </div>
+  <!-- Navigation Tabs -->
+  <div class="container mx-auto px-4 -mt-12">
+    <div class="bg-white rounded-xl card-shadow p-2 mb-6">
+      <div class="flex justify-center space-x-2 flex-wrap">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard"
+          class="nav-item active px-6 py-3 rounded-lg text-purple-600 font-medium">📊 Dashboard</button>
+        <button onclick="switchTab('transactions')" id="tab-transactions"
+          class="nav-item px-6 py-3 rounded-lg text-gray-600 font-medium">📝 รายการ</button>
+        <button onclick="switchTab('add')" id="tab-add"
+          class="nav-item px-6 py-3 rounded-lg text-gray-600 font-medium">➕ เพิ่มรายการ</button>
+      </div>
+    </div>
   </div>
- </div>
 
- <!-- Dashboard Tab -->
- <div id="dashboard" class="tab-content active">
-  <div class="container mx-auto px-4">
-   <div id="dashboardLoading" class="hidden text-center py-12">
-    <div class="loading-spinner mx-auto mb-4"></div>
-    <p class="text-gray-600">กำลังโหลดข้อมูล...</p>
-   </div>
-   <div id="dashboardContent">
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-     <div class="bg-white rounded-xl card-shadow p-6 stat-card animate-fade-in">
-      <div class="flex items-center justify-between">
-       <div>
-        <p class="text-gray-500 text-sm">ยอดรวมคงเหลือ</p>
-        <p class="text-2xl font-bold text-gray-800" id="dashBalance">฿0.00</p>
-       </div>
-       <div class="bg-purple-100 p-3 rounded-full">
-        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-         </path>
-        </svg>
-       </div>
+  <!-- Dashboard Tab -->
+  <div id="dashboard" class="tab-content active">
+    <div class="container mx-auto px-4">
+      <div id="dashboardLoading" class="hidden text-center py-12">
+        <div class="loading-spinner mx-auto mb-4"></div>
+        <p class="text-gray-600">กำลังโหลดข้อมูล...</p>
       </div>
-     </div>
-     <div class="bg-white rounded-xl card-shadow p-6 stat-card animate-fade-in" style="animation-delay: 0.1s;">
-      <div class="flex items-center justify-between">
-       <div>
-        <p class="text-gray-500 text-sm">รายรับทั้งหมด</p>
-        <p class="text-2xl font-bold income-text" id="dashIncome">฿0.00</p>
-       </div>
-       <div class="bg-green-100 p-3 rounded-full">
-        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-        </svg>
-       </div>
-      </div>
-     </div>
-     <div class="bg-white rounded-xl card-shadow p-6 stat-card animate-fade-in" style="animation-delay: 0.2s;">
-      <div class="flex items-center justify-between">
-       <div>
-        <p class="text-gray-500 text-sm">รายจ่ายทั้งหมด</p>
-        <p class="text-2xl font-bold expense-text" id="dashExpense">฿0.00</p>
-       </div>
-       <div class="bg-red-100 p-3 rounded-full">
-        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path>
-        </svg>
-       </div>
-      </div>
-     </div>
-     <div class="bg-white rounded-xl card-shadow p-6 stat-card animate-fade-in" style="animation-delay: 0.3s;">
-      <div class="flex items-center justify-between">
-       <div>
-        <p class="text-gray-500 text-sm">อัตราการออม</p>
-        <p class="text-2xl font-bold text-blue-600" id="dashSavings">0%</p>
-       </div>
-       <div class="bg-blue-100 p-3 rounded-full">
-        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6">
-         </path>
-        </svg>
-       </div>
-      </div>
-     </div>
-    </div>
-
-    <!-- Time Filter Section -->
-    <div class="bg-white rounded-xl card-shadow p-6 mb-6 animate-fade-in" style="animation-delay: 0.4s;">
-     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-      <h2 class="text-xl font-bold text-gray-800">📅 เลือกช่วงเวลาที่ดู</h2>
-      <div class="flex flex-wrap gap-2">
-       <button onclick="setTimeFilter('month')" id="btn-month"
-        class="filter-btn px-4 py-2 rounded-lg bg-purple-100 text-purple-600 font-medium hover:bg-purple-200 transition">📆
-        เดือนนี้</button>
-       <button onclick="setTimeFilter('year')" id="btn-year"
-        class="filter-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition">📅
-        ปีนี้</button>
-       <button onclick="setTimeFilter('all')" id="btn-all"
-        class="filter-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition">📊
-        ทั้งหมด</button>
-      </div>
-     </div>
-
-     <div class="flex flex-wrap items-center gap-3 p-4 bg-gray-50 rounded-lg">
-      <span class="text-gray-600 font-medium">🗓️ หรือเลือก:</span>
-      <select id="monthSelect"
-       class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white cursor-pointer"
-       onchange="onMonthYearChange()">
-       <option value="">-- เลือกเดือน --</option>
-       <option value="1">มกราคม</option>
-       <option value="2">กุมภาพันธ์</option>
-       <option value="3">มีนาคม</option>
-       <option value="4">เมษายน</option>
-       <option value="5">พฤษภาคม</option>
-       <option value="6">มิถุนายน</option>
-       <option value="7">กรกฎาคม</option>
-       <option value="8">สิงหาคม</option>
-       <option value="9">กันยายน</option>
-       <option value="10">ตุลาคม</option>
-       <option value="11">พฤศจิกายน</option>
-       <option value="12">ธันวาคม</option>
-      </select>
-
-      <select id="yearSelect"
-       class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white cursor-pointer"
-       onchange="onMonthYearChange()">
-       <option value="">-- เลือกปี --</option>
-      </select>
-
-      <button onclick="resetFilter()"
-       class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-medium"
-       title="ล้างตัวกรอง">🔄 ล้าง</button>
-     </div>
-
-     <div class="mt-3 px-4 py-3 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
-      <div class="flex items-center justify-between">
-       <p class="text-sm">
-        <span class="text-purple-600 font-medium">📌 กำลังดูข้อมูล:</span>
-        <span id="currentFilterDisplay" class="ml-2 text-lg font-bold text-purple-800">เดือนนี้</span>
-       </p>
-       <span id="dateRangeDisplay" class="text-sm text-gray-500"></span>
-      </div>
-     </div>
-    </div>
-
-    <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-     <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in" style="animation-delay: 0.5s;">
-      <h3 class="text-lg font-bold text-gray-800 mb-4">📈 รายรับ vs รายจ่าย</h3>
-      <div class="chart-container">
-       <canvas id="incomeExpenseChart"></canvas>
-      </div>
-     </div>
-     <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in" style="animation-delay: 0.6s;">
-      <h3 class="text-lg font-bold text-gray-800 mb-4">🎯 สัดส่วนรายจ่าย</h3>
-      <div class="chart-container">
-       <canvas id="categoryChart"></canvas>
-      </div>
-     </div>
-    </div>
-
-    <!-- Monthly Summary & Top Expenses -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-     <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in" style="animation-delay: 0.7s;">
-      <h3 class="text-lg font-bold text-gray-800 mb-4">📊 สรุปประจำเดือน</h3>
-      <div class="overflow-x-auto">
-       <table class="w-full">
-        <thead>
-         <tr class="bg-gray-50">
-          <th class="px-4 py-3 text-left text-gray-600 font-medium">เดือน</th>
-          <th class="px-4 py-3 text-right text-gray-600 font-medium">รายรับ</th>
-          <th class="px-4 py-3 text-right text-gray-600 font-medium">รายจ่าย</th>
-          <th class="px-4 py-3 text-right text-gray-600 font-medium">คงเหลือ</th>
-         </tr>
-        </thead>
-        <tbody id="monthlySummary">
-         <tr>
-          <td colspan="4" class="px-4 py-8 text-center text-gray-500">ยังไม่มีข้อมูล</td>
-         </tr>
-        </tbody>
-       </table>
-      </div>
-     </div>
-     <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in" style="animation-delay: 0.8s;">
-      <h3 class="text-lg font-bold text-gray-800 mb-4">💸 รายจ่ายสูงสุด 5 อันดับ</h3>
-      <div id="topExpenses" class="space-y-3">
-       <p class="text-gray-500 text-center py-4">ยังไม่มีข้อมูล</p>
-      </div>
-     </div>
-    </div>
-   </div>
-  </div>
- </div>
-
- <!-- Transactions Tab -->
- <div id="transactions" class="tab-content">
-  <div class="container mx-auto px-4">
-   <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in">
-    <div class="flex justify-between items-center mb-4 flex-wrap gap-4">
-     <h2 class="text-xl font-bold text-gray-800">📋 ประวัติรายการทั้งหมด</h2>
-     <button onclick="refreshTransactions()" class="text-purple-500 hover:text-purple-700 text-sm font-medium">🔄
-      รีเฟรช</button>
-    </div>
-    <div class="flex gap-2 mb-4 flex-wrap">
-     <input type="text" id="searchTransaction" placeholder="🔍 ค้นหารายการ..."
-      class="flex-1 min-w-[200px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
-     <select id="filterType" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-      onchange="renderTransactions()">
-      <option value="all">ทั้งหมด</option>
-      <option value="income">รายรับ</option>
-      <option value="expense">รายจ่าย</option>
-     </select>
-    </div>
-    <div id="transactionList" class="space-y-3">
-     <div class="text-center py-12">
-      <div class="loading-spinner mx-auto mb-4"></div>
-      <p class="text-gray-600">กำลังโหลด...</p>
-     </div>
-    </div>
-   </div>
-  </div>
- </div>
-
- <!-- Add Transaction Tab -->
- <div id="add" class="tab-content">
-  <div class="container mx-auto px-4">
-   <div class="bg-white rounded-xl card-shadow p-6 mb-6 animate-fade-in glow-effect">
-    <div class="flex items-center space-x-2 mb-4">
-     <div class="ai-pulse">
-      <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
-       </path>
-      </svg>
-     </div>
-     <h2 class="text-xl font-bold text-gray-800">🧠 AI วิเคราะห์อัตโนมัติ</h2>
-    </div>
-
-    <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-4">
-     <p class="text-sm text-gray-600 mb-2">💡 ลองพิมพ์เช่น:</p>
-     <div class="flex flex-wrap gap-2">
-      <span class="px-3 py-1 bg-white rounded-full text-xs text-gray-700 shadow cursor-pointer hover:bg-purple-100"
-       onclick="fillExample('กินข้าว 50 บาท')">กินข้าว 50 บาท</span>
-      <span class="px-3 py-1 bg-white rounded-full text-xs text-gray-700 shadow cursor-pointer hover:bg-purple-100"
-       onclick="fillExample('เงินเดือนออก 25000')">เงินเดือนออก 25000</span>
-      <span class="px-3 py-1 bg-white rounded-full text-xs text-gray-700 shadow cursor-pointer hover:bg-purple-100"
-       onclick="fillExample('ซื้อกาแฟ 100 บาท')">ซื้อกาแฟ 100 บาท</span>
-      <span class="px-3 py-1 bg-white rounded-full text-xs text-gray-700 shadow cursor-pointer hover:bg-purple-100"
-       onclick="fillExample('รับเงินคืน 500')">รับเงินคืน 500</span>
-     </div>
-    </div>
-
-    <form id="transactionForm" class="space-y-4">
-     <div>
-      <label class="block text-gray-700 text-sm font-medium mb-2">📝 พิมพ์รายละเอียด (AI จะวิเคราะห์ให้)</label>
-      <div class="relative">
-       <input type="text" id="aiInput"
-        class="w-full px-4 py-4 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
-        placeholder="เช่น กินข้าว 50 บาท, เงินเดือนออก 25000..." required>
-       <div id="aiLoading" class="absolute right-4 top-1/2 transform -translate-y-1/2 hidden">
-        <div class="flex space-x-1">
-         <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
-         <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
-         <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+      <div id="dashboardContent">
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white rounded-xl card-shadow p-6 stat-card animate-fade-in">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500 text-sm">ยอดรวมคงเหลือ</p>
+                <p class="text-2xl font-bold text-gray-800" id="dashBalance">฿0.00</p>
+              </div>
+              <div class="bg-purple-100 p-3 rounded-full">
+                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                  </path>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl card-shadow p-6 stat-card animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500 text-sm">รายรับทั้งหมด</p>
+                <p class="text-2xl font-bold income-text" id="dashIncome">฿0.00</p>
+              </div>
+              <div class="bg-green-100 p-3 rounded-full">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12">
+                  </path>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl card-shadow p-6 stat-card animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500 text-sm">รายจ่ายทั้งหมด</p>
+                <p class="text-2xl font-bold expense-text" id="dashExpense">฿0.00</p>
+              </div>
+              <div class="bg-red-100 p-3 rounded-full">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6">
+                  </path>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl card-shadow p-6 stat-card animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500 text-sm">อัตราการออม</p>
+                <p class="text-2xl font-bold text-blue-600" id="dashSavings">0%</p>
+              </div>
+              <div class="bg-blue-100 p-3 rounded-full">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
-       </div>
-      </div>
-      <div id="aiResult" class="ai-result-box mt-3">
-       <div class="bg-green-50 border border-green-200 rounded-lg p-3">
-        <div class="flex items-center space-x-2 mb-2">
-         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-           d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-         </svg>
-         <span class="text-green-800 font-medium">AI วิเคราะห์เสร็จสิ้น!</span>
+
+        <!-- Time Filter -->
+        <div class="bg-white rounded-xl card-shadow p-6 mb-6 animate-fade-in" style="animation-delay: 0.4s;">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <h2 class="text-xl font-bold text-gray-800">📅 เลือกช่วงเวลาที่ดู</h2>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setTimeFilter('month')" id="btn-month"
+                class="filter-btn px-4 py-2 rounded-lg bg-purple-100 text-purple-600 font-medium hover:bg-purple-200 transition">📆
+                เดือนนี้</button>
+              <button onclick="setTimeFilter('year')" id="btn-year"
+                class="filter-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition">📅
+                ปีนี้</button>
+              <button onclick="setTimeFilter('all')" id="btn-all"
+                class="filter-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition">📊
+                ทั้งหมด</button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 p-4 bg-gray-50 rounded-lg">
+            <span class="text-gray-600 font-medium">🗓️ หรือเลือก:</span>
+            <select id="monthSelect"
+              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white cursor-pointer"
+              onchange="onMonthYearChange()">
+              <option value="">-- เลือกเดือน --</option>
+              <option value="1">มกราคม</option>
+              <option value="2">กุมภาพันธ์</option>
+              <option value="3">มีนาคม</option>
+              <option value="4">เมษายน</option>
+              <option value="5">พฤษภาคม</option>
+              <option value="6">มิถุนายน</option>
+              <option value="7">กรกฎาคม</option>
+              <option value="8">สิงหาคม</option>
+              <option value="9">กันยายน</option>
+              <option value="10">ตุลาคม</option>
+              <option value="11">พฤศจิกายน</option>
+              <option value="12">ธันวาคม</option>
+            </select>
+
+            <select id="yearSelect"
+              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white cursor-pointer"
+              onchange="onMonthYearChange()">
+              <option value="">-- เลือกปี --</option>
+            </select>
+
+            <button onclick="resetFilter()"
+              class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-medium"
+              title="ล้างตัวกรอง">🔄 ล้าง</button>
+          </div>
+
+          <div class="mt-3 px-4 py-3 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
+            <div class="flex items-center justify-between">
+              <p class="text-sm">
+                <span class="text-purple-600 font-medium">📌 กำลังดูข้อมูล:</span>
+                <span id="currentFilterDisplay" class="ml-2 text-lg font-bold text-purple-800">เดือนนี้</span>
+              </p>
+              <span id="dateRangeDisplay" class="text-sm text-gray-500"></span>
+            </div>
+          </div>
         </div>
-        <div class="grid grid-cols-3 gap-3">
-         <div>
-          <p class="text-xs text-gray-500">ประเภท</p>
-          <p id="aiType" class="font-bold text-lg"></p>
-         </div>
-         <div>
-          <p class="text-xs text-gray-500">จำนวนเงิน</p>
-          <p id="aiAmount" class="font-bold text-lg"></p>
-         </div>
-         <div>
-          <p class="text-xs text-gray-500">หมวดหมู่</p>
-          <p id="aiCategory" class="font-bold text-lg"></p>
-         </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in" style="animation-delay: 0.5s;">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">📈 รายรับ vs รายจ่าย</h3>
+            <div class="chart-container">
+              <canvas id="incomeExpenseChart"></canvas>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in" style="animation-delay: 0.6s;">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">🎯 สัดส่วนรายจ่าย</h3>
+            <div class="chart-container">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
         </div>
-       </div>
+
+        <!-- Monthly Summary & Top Expenses -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in" style="animation-delay: 0.7s;">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">📊 สรุปประจำเดือน</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-gray-50">
+                    <th class="px-4 py-3 text-left text-gray-600 font-medium">เดือน</th>
+                    <th class="px-4 py-3 text-right text-gray-600 font-medium">รายรับ</th>
+                    <th class="px-4 py-3 text-right text-gray-600 font-medium">รายจ่าย</th>
+                    <th class="px-4 py-3 text-right text-gray-600 font-medium">คงเหลือ</th>
+                  </tr>
+                </thead>
+                <tbody id="monthlySummary">
+                  <tr>
+                    <td colspan="4" class="px-4 py-8 text-center text-gray-500">ยังไม่มีข้อมูล</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in" style="animation-delay: 0.8s;">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">💸 รายจ่ายสูงสุด 5 อันดับ</h3>
+            <div id="topExpenses" class="space-y-3">
+              <p class="text-gray-500 text-center py-4">ยังไม่มีข้อมูล</p>
+            </div>
+          </div>
+        </div>
       </div>
-     </div>
-     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-       <label class="block text-gray-700 text-sm font-medium mb-2">ประเภทรายการ</label>
-       <select id="type"
-        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-        required>
-        <option value="expense">💸 รายจ่าย</option>
-        <option value="income">💰 รายรับ</option>
-       </select>
-      </div>
-      <div>
-       <label class="block text-gray-700 text-sm font-medium mb-2">จำนวนเงิน (บาท)</label>
-       <input type="number" id="amount"
-        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-        placeholder="0.00" min="0.01" step="0.01" required>
-      </div>
-     </div>
-     <div>
-      <label class="block text-gray-700 text-sm font-medium mb-2">รายละเอียด</label>
-      <input type="text" id="description"
-       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-       placeholder="รายละเอียดรายการ" required>
-     </div>
-     <div>
-      <label class="block text-gray-700 text-sm font-medium mb-2">หมวดหมู่</label>
-      <select id="category"
-       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></select>
-     </div>
-     <div>
-      <label class="block text-gray-700 text-sm font-medium mb-2">วันที่</label>
-      <input type="date" id="date"
-       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-       required>
-     </div>
-     <button type="submit" id="submitBtn"
-      class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 flex items-center justify-center space-x-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-      </svg>
-      <span>บันทึกข้อมูล</span>
-     </button>
-    </form>
-   </div>
+    </div>
   </div>
- </div>
 
- <!-- Toast Notification -->
- <div id="toast"
-  class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
- </div>
+  <!-- Transactions Tab - แก้ไขใหม่ เพิ่มตัวกรองเดือน/ปี -->
+  <div id="transactions" class="tab-content">
+    <div class="container mx-auto px-4">
+      <div class="bg-white rounded-xl card-shadow p-6 animate-fade-in">
+        <div class="flex justify-between items-center mb-4 flex-wrap gap-4">
+          <h2 class="text-xl font-bold text-gray-800">📋 ประวัติรายการทั้งหมด</h2>
+          <button onclick="refreshTransactions()" class="text-purple-500 hover:text-purple-700 text-sm font-medium">🔄
+            รีเฟรช</button>
+        </div>
 
- <script>
-  // API Configuration
-  const API_BASE = '/expense_tracker/api';
-  const USER_ID = 1;
+        <!-- Filter Section - เพิ่มตัวกรองเดือน/ปี -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="text-gray-600 font-medium">🔍 กรองตาม:</span>
 
-  let categories = [];
-  let transactions = [];
-  let currentTimeFilter = 'month';
-  let selectedMonth = null;
-  let selectedYear = null;
-  let incomeExpenseChart = null;
-  let categoryChart = null;
-  let aiTimeout = null;
+            <!-- Month Filter -->
+            <select id="transMonthSelect"
+              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white cursor-pointer"
+              onchange="renderTransactions()">
+              <option value="">-- ทุกเดือน --</option>
+              <option value="1">มกราคม</option>
+              <option value="2">กุมภาพันธ์</option>
+              <option value="3">มีนาคม</option>
+              <option value="4">เมษายน</option>
+              <option value="5">พฤษภาคม</option>
+              <option value="6">มิถุนายน</option>
+              <option value="7">กรกฎาคม</option>
+              <option value="8">สิงหาคม</option>
+              <option value="9">กันยายน</option>
+              <option value="10">ตุลาคม</option>
+              <option value="11">พฤศจิกายน</option>
+              <option value="12">ธันวาคม</option>
+            </select>
 
-  // Month names Thai
-  const monthNames = {
-   '1': 'มกราคม', '2': 'กุมภาพันธ์', '3': 'มีนาคม', '4': 'เมษายน',
-   '5': 'พฤษภาคม', '6': 'มิถุนายน', '7': 'กรกฎาคม', '8': 'สิงหาคม',
-   '9': 'กันยายน', '10': 'ตุลาคม', '11': 'พฤศจิกายน', '12': 'ธันวาคม'
-  };
+            <!-- Year Filter -->
+            <select id="transYearSelect"
+              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white cursor-pointer"
+              onchange="renderTransactions()">
+              <option value="">-- ทุกปี --</option>
+            </select>
 
-  // Initialize Year Select
-  function initYearSelect() {
-   const yearSelect = document.getElementById('yearSelect');
-   if (!yearSelect) {
-    console.error('yearSelect element not found!');
-    return;
-   }
-   const currentYear = new Date().getFullYear();
-   const years = [];
-   for (let i = currentYear - 10; i <= currentYear + 2; i++) {
-    years.push(i);
-   }
-   yearSelect.innerHTML = '<option value="">-- เลือกปี --</option>' +
-    years.map(year => `<option value="${year}">${year + 543}</option>`).join('');
-   yearSelect.value = '';
-   console.log('✓ Year select initialized with', years.length, 'years');
-  }
+            <!-- Type Filter -->
+            <select id="filterType"
+              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+              onchange="renderTransactions()">
+              <option value="all">📊 ทั้งหมด</option>
+              <option value="income">💰 รายรับ</option>
+              <option value="expense">💸 รายจ่าย</option>
+            </select>
 
-  // Set Time Filter
-  function setTimeFilter(filter) {
-   console.log('setTimeFilter:', filter);
-   currentTimeFilter = filter;
-   selectedMonth = null;
-   selectedYear = null;
-   document.getElementById('monthSelect').value = '';
-   document.getElementById('yearSelect').value = '';
-   document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.remove('bg-purple-100', 'text-purple-600');
-    btn.classList.add('bg-gray-100', 'text-gray-600');
-   });
-   const activeBtn = document.getElementById(`btn-${filter}`);
-   if (activeBtn) {
-    activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
-    activeBtn.classList.add('bg-purple-100', 'text-purple-600');
-   }
-   updateFilterDisplay();
-   loadDashboard();
-  }
+            <!-- Search -->
+            <input type="text" id="searchTransaction" placeholder="🔍 ค้นหารายการ..."
+              class="flex-1 min-w-[200px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+              oninput="renderTransactions()">
 
-  // เมื่อเปลี่ยนเดือน/ปี จาก Dropdown
-  function onMonthYearChange() {
-   const monthSelect = document.getElementById('monthSelect');
-   const yearSelect = document.getElementById('yearSelect');
-   selectedMonth = monthSelect.value ? parseInt(monthSelect.value) : null;
-   selectedYear = yearSelect.value ? parseInt(yearSelect.value) : null;
-   console.log('onMonthYearChange - Month:', selectedMonth, 'Year:', selectedYear);
-   document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.remove('bg-purple-100', 'text-purple-600');
-    btn.classList.add('bg-gray-100', 'text-gray-600');
-   });
-   updateFilterDisplay();
-   if (selectedMonth !== null && selectedYear !== null) {
-    currentTimeFilter = 'custom';
-    console.log('Loading dashboard for', monthNames[selectedMonth], selectedYear + 543);
-    loadDashboard();
-   } else if (selectedYear !== null && selectedMonth === null) {
-    currentTimeFilter = 'year_custom';
-    console.log('Loading dashboard for year', selectedYear + 543);
-    loadDashboard();
-   }
-  }
+            <!-- Reset Button -->
+            <button onclick="resetTransactionFilter()"
+              class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-medium"
+              title="ล้างตัวกรอง">
+              🔄 ล้าง
+            </button>
+          </div>
 
-  // Reset Filter
-  function resetFilter() {
-   console.log('resetFilter');
-   currentTimeFilter = 'month';
-   selectedMonth = null;
-   selectedYear = null;
-   document.getElementById('monthSelect').value = '';
-   document.getElementById('yearSelect').value = '';
-   setTimeFilter('month');
-  }
+          <!-- Filter Summary -->
+          <div class="mt-3 px-3 py-2 bg-white rounded-lg border border-gray-200">
+            <p class="text-sm text-gray-600">
+              <span id="filterSummary">แสดงรายการทั้งหมด</span>
+            </p>
+          </div>
+        </div>
 
-  // Update Filter Display
-  function updateFilterDisplay() {
-   const display = document.getElementById('currentFilterDisplay');
-   const dateRange = document.getElementById('dateRangeDisplay');
-   if (!display) return;
-   if (selectedMonth !== null && selectedYear !== null) {
-    display.textContent = `${monthNames[selectedMonth]} ${selectedYear + 543}`;
-    const startDate = new Date(selectedYear, selectedMonth - 1, 1);
-    const endDate = new Date(selectedYear, selectedMonth, 0);
-    if (dateRange) {
-     dateRange.textContent = `${startDate.toLocaleDateString('th-TH')} - ${endDate.toLocaleDateString('th-TH')}`;
-    }
-   } else if (selectedYear !== null && selectedMonth === null) {
-    display.textContent = `ปี ${selectedYear + 543}`;
-    if (dateRange) {
-     dateRange.textContent = `${selectedYear}-01-01 ถึง ${selectedYear}-12-31`;
-    }
-   } else {
-    const filterTexts = {
-     'month': 'เดือนนี้',
-     'year': 'ปีนี้',
-     'all': 'ทั้งหมด',
-     'custom': 'กำหนดเอง',
-     'year_custom': 'กำหนดเอง'
+        <!-- Transaction List -->
+        <div id="transactionList" class="space-y-3">
+          <div class="text-center py-12">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-gray-600">กำลังโหลด...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Transaction Tab -->
+  <div id="add" class="tab-content">
+    <div class="container mx-auto px-4">
+      <div class="bg-white rounded-xl card-shadow p-6 mb-6 animate-fade-in glow-effect">
+        <div class="flex items-center space-x-2 mb-4">
+          <div class="ai-pulse">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+              </path>
+            </svg>
+          </div>
+          <h2 class="text-xl font-bold text-gray-800">🧠 AI วิเคราะห์อัตโนมัติ</h2>
+        </div>
+
+        <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-4">
+          <p class="text-sm text-gray-600 mb-2">💡 ลองพิมพ์เช่น:</p>
+          <div class="flex flex-wrap gap-2">
+            <span
+              class="px-3 py-1 bg-white rounded-full text-xs text-gray-700 shadow cursor-pointer hover:bg-purple-100"
+              onclick="fillExample('กินข้าว 50 บาท')">กินข้าว 50 บาท</span>
+            <span
+              class="px-3 py-1 bg-white rounded-full text-xs text-gray-700 shadow cursor-pointer hover:bg-purple-100"
+              onclick="fillExample('เงินเดือนออก 25000')">เงินเดือนออก 25000</span>
+            <span
+              class="px-3 py-1 bg-white rounded-full text-xs text-gray-700 shadow cursor-pointer hover:bg-purple-100"
+              onclick="fillExample('ซื้อกาแฟ 100 บาท')">ซื้อกาแฟ 100 บาท</span>
+            <span
+              class="px-3 py-1 bg-white rounded-full text-xs text-gray-700 shadow cursor-pointer hover:bg-purple-100"
+              onclick="fillExample('รับเงินคืน 500')">รับเงินคืน 500</span>
+          </div>
+        </div>
+
+        <form id="transactionForm" class="space-y-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">📝 พิมพ์รายละเอียด (AI จะวิเคราะห์ให้)</label>
+            <div class="relative">
+              <input type="text" id="aiInput"
+                class="w-full px-4 py-4 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
+                placeholder="เช่น กินข้าว 50 บาท, เงินเดือนออก 25000..." required>
+              <div id="aiLoading" class="absolute right-4 top-1/2 transform -translate-y-1/2 hidden">
+                <div class="flex space-x-1">
+                  <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+                  <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+                  <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                </div>
+              </div>
+            </div>
+            <div id="aiResult" class="ai-result-box mt-3">
+              <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                <div class="flex items-center space-x-2 mb-2">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span class="text-green-800 font-medium">AI วิเคราะห์เสร็จสิ้น!</span>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                  <div>
+                    <p class="text-xs text-gray-500">ประเภท</p>
+                    <p id="aiType" class="font-bold text-lg"></p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">จำนวนเงิน</p>
+                    <p id="aiAmount" class="font-bold text-lg"></p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">หมวดหมู่</p>
+                    <p id="aiCategory" class="font-bold text-lg"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-700 text-sm font-medium mb-2">ประเภทรายการ</label>
+              <select id="type"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                required>
+                <option value="expense">💸 รายจ่าย</option>
+                <option value="income">💰 รายรับ</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-700 text-sm font-medium mb-2">จำนวนเงิน (บาท)</label>
+              <input type="number" id="amount"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="0.00" min="0.01" step="0.01" required>
+            </div>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">รายละเอียด</label>
+            <input type="text" id="description"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              placeholder="รายละเอียดรายการ" required>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">หมวดหมู่</label>
+            <select id="category"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">วันที่</label>
+            <input type="date" id="date"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              required>
+          </div>
+          <button type="submit" id="submitBtn"
+            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+            </svg>
+            <span>บันทึกข้อมูล</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast"
+    class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+  </div>
+
+  <script>
+    // API Configuration
+    const API_BASE = '/expense_tracker/api';
+    const USER_ID = 1;
+
+    let categories = [];
+    let transactions = [];
+    let currentTimeFilter = 'month';
+    let selectedMonth = null;
+    let selectedYear = null;
+    let incomeExpenseChart = null;
+    let categoryChart = null;
+    let aiTimeout = null;
+
+    // Month names Thai
+    const monthNames = {
+      '1': 'มกราคม', '2': 'กุมภาพันธ์', '3': 'มีนาคม', '4': 'เมษายน',
+      '5': 'พฤษภาคม', '6': 'มิถุนายน', '7': 'กรกฎาคม', '8': 'สิงหาคม',
+      '9': 'กันยายน', '10': 'ตุลาคม', '11': 'พฤศจิกายน', '12': 'ธันวาคม'
     };
-    display.textContent = filterTexts[currentTimeFilter] || 'เดือนนี้';
-    const today = new Date();
-    if (dateRange) {
-     if (currentTimeFilter === 'month') {
-      const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-      const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-      dateRange.textContent = `${startDate.toLocaleDateString('th-TH')} - ${endDate.toLocaleDateString('th-TH')}`;
-     } else if (currentTimeFilter === 'year') {
-      dateRange.textContent = `${today.getFullYear()}-01-01 ถึง ${today.getFullYear()}-12-31`;
-     } else {
-      dateRange.textContent = '';
-     }
-    }
-   }
-  }
 
-  // API Functions
-  async function fetchAPI(endpoint, options = {}) {
-   try {
-    const url = API_BASE + endpoint;
-    console.log('🌐 Fetching:', url);
-    const response = await fetch(url, {
-     ...options,
-     headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-     }
-    });
-    const result = await response.json();
-    console.log('📥 Response:', result);
-    return result;
-   } catch (error) {
-    console.error('❌ API Error:', error);
-    return { success: false, message: error.message };
-   }
-  }
-
-  // Load Categories
-  async function loadCategories() {
-   const result = await fetchAPI('/categories.php');
-   console.log('Categories:', result);
-   if (result.success) {
-    categories = result.data;
-    populateCategorySelect();
-   } else {
-    showToast('❌ ไม่สามารถโหลดหมวดหมู่ได้', 'error');
-   }
-  }
-
-  // Populate Category Select
-  function populateCategorySelect() {
-   const select = document.getElementById('category');
-   if (!select || !categories.length) return;
-   select.innerHTML = categories.map(cat =>
-    `<option value="${cat.id}">${cat.icon} ${cat.name_th}</option>`
-   ).join('');
-  }
-
-  // Load Dashboard Data
-  async function loadDashboard() {
-   console.log('🔄 loadDashboard called');
-   console.log('Filter:', currentTimeFilter, 'Month:', selectedMonth, 'Year:', selectedYear);
-   document.getElementById('dashboardLoading').classList.remove('hidden');
-   document.getElementById('dashboardContent').classList.add('hidden');
-   let queryParams = `?user_id=${USER_ID}&filter=${currentTimeFilter}`;
-   if (selectedMonth !== null && selectedYear !== null) {
-    queryParams += `&month=${selectedMonth}&year=${selectedYear}`;
-    console.log('📍 Query with month & year:', queryParams);
-   } else if (selectedYear !== null && selectedMonth === null) {
-    queryParams += `&year=${selectedYear}`;
-    console.log('📍 Query with year only:', queryParams);
-   }
-   const result = await fetchAPI(`/summary.php${queryParams}`);
-   console.log('📊 Dashboard result:', result);
-   if (result.success) {
-    updateDashboard(result.data);
-   } else {
-    showToast('❌ ไม่สามารถโหลดข้อมูลได้: ' + (result.message || ''), 'error');
-   }
-   document.getElementById('dashboardLoading').classList.add('hidden');
-   document.getElementById('dashboardContent').classList.remove('hidden');
-  }
-
-  // Update Dashboard
-  function updateDashboard(data) {
-   console.log('Updating dashboard with data:', data);
-   const { summary, monthly, categories: catData } = data;
-   document.getElementById('dashBalance').textContent = formatCurrency(summary.balance);
-   document.getElementById('dashIncome').textContent = formatCurrency(summary.total_income);
-   document.getElementById('dashExpense').textContent = formatCurrency(summary.total_expense);
-   document.getElementById('dashSavings').textContent = summary.savings_rate + '%';
-   updateCharts(data);
-   updateMonthlySummary(monthly);
-   updateTopExpenses(catData);
-  }
-
-  // Load Transactions
-  async function loadTransactions() {
-   const result = await fetchAPI(`/transactions.php?user_id=${USER_ID}&limit=100`);
-   console.log('Transactions:', result);
-   if (result.success) {
-    transactions = result.data;
-    renderTransactions();
-   } else {
-    document.getElementById('transactionList').innerHTML =
-     '<p class="text-red-500 text-center py-8">❌ ไม่สามารถโหลดข้อมูล</p>';
-   }
-  }
-
-  // Add Transaction
-  async function addTransaction(data) {
-   const submitBtn = document.getElementById('submitBtn');
-   const originalContent = submitBtn.innerHTML;
-   submitBtn.disabled = true;
-   submitBtn.innerHTML = '<div class="loading-spinner w-6 h-6"></div>';
-   const result = await fetchAPI('/transactions.php', {
-    method: 'POST',
-    body: JSON.stringify(data)
-   });
-   submitBtn.disabled = false;
-   submitBtn.innerHTML = originalContent;
-   return result;
-  }
-
-  // Delete Transaction
-  async function deleteTransaction(id) {
-   if (!confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) return;
-   const result = await fetchAPI(`/transactions.php?user_id=${USER_ID}&id=${id}`, {
-    method: 'DELETE'
-   });
-   if (result.success) {
-    loadDashboard();
-    loadTransactions();
-    showToast('✓ ลบรายการสำเร็จ');
-   } else {
-    showToast('❌ ไม่สามารถลบได้', 'error');
-   }
-  }
-
-  // Tab Switching
-  function switchTab(tabName) {
-   document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-   document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.remove('active', 'text-purple-600');
-    item.classList.add('text-gray-600');
-   });
-   document.getElementById(tabName).classList.add('active');
-   document.getElementById('tab-' + tabName).classList.add('active', 'text-purple-600');
-   document.getElementById('tab-' + tabName).classList.remove('text-gray-600');
-   if (tabName === 'dashboard') loadDashboard();
-   if (tabName === 'transactions') loadTransactions();
-  }
-
-  // Format Currency
-  function formatCurrency(amount) {
-   return '฿' + parseFloat(amount).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
-  // Format Date
-  function formatDate(dateString) {
-   const date = new Date(dateString);
-   return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
-  }
-
-  // Get Month Name
-  function getMonthName(monthIndex) {
-   const months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-   return months[monthIndex - 1] || months[0];
-  }
-
-  // 🔥 Update Charts - แก้ไขให้กรองตามปี/เดือน ที่เลือก
-  function updateCharts(data) {
-   console.log('Updating charts...');
-   const ctx1 = document.getElementById('incomeExpenseChart');
-   const ctx2 = document.getElementById('categoryChart');
-   if (!ctx1 || !ctx2) {
-    console.error('Chart canvas not found!');
-    return;
-   }
-   // Destroy old charts
-   if (incomeExpenseChart) {
-    incomeExpenseChart.destroy();
-    console.log('Destroyed old incomeExpenseChart');
-   }
-   if (categoryChart) {
-    categoryChart.destroy();
-    console.log('Destroyed old categoryChart');
-   }
-   // Prepare data for charts
-   let monthlyData = data.monthly || [];
-   const categoryData = data.categories || [];
-   console.log('Monthly data (before filter):', monthlyData);
-
-   // 🔥 สำคัญ! กรองข้อมูลตามปี/เดือน ที่เลือก
-   if (selectedYear !== null) {
-    monthlyData = monthlyData.filter(m => parseInt(m.year) === selectedYear);
-    console.log('Filtered monthly data for year', selectedYear, ':', monthlyData);
-   }
-   if (selectedMonth !== null && selectedYear !== null) {
-    monthlyData = monthlyData.filter(m =>
-     parseInt(m.year) === selectedYear && parseInt(m.month) === selectedMonth
-    );
-    console.log('Filtered monthly data for', selectedMonth, '/', selectedYear, ':', monthlyData);
-   }
-
-   // Income vs Expense Chart
-   const chartData = monthlyData.slice(0, 12).reverse();
-   const monthlyLabels = chartData.map(m =>
-    `${getMonthName(parseInt(m.month))} ${parseInt(m.year) - 543}`
-   );
-   const incomeData = chartData.map(m => parseFloat(m.total_income || 0));
-   const expenseData = chartData.map(m => parseFloat(m.total_expense || 0));
-
-   if (ctx1) {
-    incomeExpenseChart = new Chart(ctx1, {
-     type: 'bar',
-     data: {
-      labels: monthlyLabels.length > 0 ? monthlyLabels : ['ไม่มีข้อมูล'],
-      datasets: [
-       {
-        label: 'รายรับ',
-        data: incomeData.length > 0 ? incomeData : [0],
-        backgroundColor: 'rgba(16, 185, 129, 0.7)',
-        borderColor: 'rgba(16, 185, 129, 1)',
-        borderWidth: 1
-       },
-       {
-        label: 'รายจ่าย',
-        data: expenseData.length > 0 ? expenseData : [0],
-        backgroundColor: 'rgba(239, 68, 68, 0.7)',
-        borderColor: 'rgba(239, 68, 68, 1)',
-        borderWidth: 1
-       }
-      ]
-     },
-     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-       y: { beginAtZero: true }
+    // Initialize Year Select
+    function initYearSelect() {
+      const yearSelect = document.getElementById('yearSelect');
+      const transYearSelect = document.getElementById('transYearSelect');
+      if (!yearSelect || !transYearSelect) {
+        console.error('Year select elements not found!');
+        return;
       }
-     }
-    });
-    console.log('Created new incomeExpenseChart');
-   }
+      const currentYear = new Date().getFullYear();
+      const years = [];
+      for (let i = currentYear - 10; i <= currentYear + 2; i++) {
+        years.push(i);
+      }
+      const yearOptions = years.map(year => `<option value="${year}">${year + 543}</option>`).join('');
+      yearSelect.innerHTML = '<option value="">-- เลือกปี --</option>' + yearOptions;
+      transYearSelect.innerHTML = '<option value="">-- ทุกปี --</option>' + yearOptions;
+      yearSelect.value = '';
+      transYearSelect.value = '';
+      console.log('✓ Year select initialized with', years.length, 'years');
+    }
 
-   // Category Chart
-   if (categoryData && categoryData.length > 0 && ctx2) {
-    const categoryLabels = categoryData.map(c => c.name_th);
-    const categoryValues = categoryData.map(c => parseFloat(c.total_amount || 0));
-    const categoryColors = categoryData.map(c => c.color);
-    categoryChart = new Chart(ctx2, {
-     type: 'doughnut',
-     data: {
-      labels: categoryLabels,
-      datasets: [{
-       data: categoryValues,
-       backgroundColor: categoryColors
-      }]
-     },
-     options: {
-      responsive: true,
-      maintainAspectRatio: false
-     }
-    });
-    console.log('Created new categoryChart');
-   }
-  }
+    // Set Time Filter
+    function setTimeFilter(filter) {
+      console.log('setTimeFilter:', filter);
+      currentTimeFilter = filter;
+      selectedMonth = null;
+      selectedYear = null;
+      document.getElementById('monthSelect').value = '';
+      document.getElementById('yearSelect').value = '';
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-100', 'text-purple-600');
+        btn.classList.add('bg-gray-100', 'text-gray-600');
+      });
+      const activeBtn = document.getElementById(`btn-${filter}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
+        activeBtn.classList.add('bg-purple-100', 'text-purple-600');
+      }
+      updateFilterDisplay();
+      loadDashboard();
+    }
 
-  // 🔥 Update Monthly Summary - แก้ไขให้กรองตามปี ที่เลือก
-  function updateMonthlySummary(monthly) {
-   const tbody = document.getElementById('monthlySummary');
-   if (!tbody) return;
-   // 🔥 สำคัญ! กรองข้อมูลตามปี ที่เลือก
-   let filteredMonthly = monthly || [];
-   if (selectedYear !== null) {
-    filteredMonthly = filteredMonthly.filter(m => parseInt(m.year) === selectedYear);
-    console.log('Filtered monthly summary for year', selectedYear, ':', filteredMonthly);
-   }
-   if (!filteredMonthly || filteredMonthly.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">ยังไม่มีข้อมูล</td></tr>';
-    return;
-   }
-   tbody.innerHTML = filteredMonthly.slice(0, 12).map(m => {
-    const balance = parseFloat(m.total_income || 0) - parseFloat(m.total_expense || 0);
-    const monthName = getMonthName(parseInt(m.month));
-    const yearBE = parseInt(m.year) - 543;
-    return `
+    // เมื่อเปลี่ยนเดือน/ปี จาก Dropdown
+    function onMonthYearChange() {
+      const monthSelect = document.getElementById('monthSelect');
+      const yearSelect = document.getElementById('yearSelect');
+      selectedMonth = monthSelect.value ? parseInt(monthSelect.value) : null;
+      selectedYear = yearSelect.value ? parseInt(yearSelect.value) : null;
+      console.log('onMonthYearChange - Month:', selectedMonth, 'Year:', selectedYear);
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-100', 'text-purple-600');
+        btn.classList.add('bg-gray-100', 'text-gray-600');
+      });
+      updateFilterDisplay();
+      if (selectedMonth !== null && selectedYear !== null) {
+        currentTimeFilter = 'custom';
+        console.log('Loading dashboard for', monthNames[selectedMonth], selectedYear + 543);
+        loadDashboard();
+      } else if (selectedYear !== null && selectedMonth === null) {
+        currentTimeFilter = 'year_custom';
+        console.log('Loading dashboard for year', selectedYear + 543);
+        loadDashboard();
+      }
+    }
+
+    // Reset Filter
+    function resetFilter() {
+      console.log('resetFilter');
+      currentTimeFilter = 'month';
+      selectedMonth = null;
+      selectedYear = null;
+      document.getElementById('monthSelect').value = '';
+      document.getElementById('yearSelect').value = '';
+      setTimeFilter('month');
+    }
+
+    // Reset Transaction Filter
+    function resetTransactionFilter() {
+      document.getElementById('transMonthSelect').value = '';
+      document.getElementById('transYearSelect').value = '';
+      document.getElementById('filterType').value = 'all';
+      document.getElementById('searchTransaction').value = '';
+      renderTransactions();
+    }
+
+    // Update Filter Display
+    function updateFilterDisplay() {
+      const display = document.getElementById('currentFilterDisplay');
+      const dateRange = document.getElementById('dateRangeDisplay');
+      if (!display) return;
+      if (selectedMonth !== null && selectedYear !== null) {
+        display.textContent = `${monthNames[selectedMonth]} ${selectedYear + 543}`;
+        const startDate = new Date(selectedYear, selectedMonth - 1, 1);
+        const endDate = new Date(selectedYear, selectedMonth, 0);
+        if (dateRange) {
+          dateRange.textContent = `${startDate.toLocaleDateString('th-TH')} - ${endDate.toLocaleDateString('th-TH')}`;
+        }
+      } else if (selectedYear !== null && selectedMonth === null) {
+        display.textContent = `ปี ${selectedYear + 543}`;
+        if (dateRange) {
+          dateRange.textContent = `${selectedYear}-01-01 ถึง ${selectedYear}-12-31`;
+        }
+      } else {
+        const filterTexts = {
+          'month': 'เดือนนี้',
+          'year': 'ปีนี้',
+          'all': 'ทั้งหมด',
+          'custom': 'กำหนดเอง',
+          'year_custom': 'กำหนดเอง'
+        };
+        display.textContent = filterTexts[currentTimeFilter] || 'เดือนนี้';
+        const today = new Date();
+        if (dateRange) {
+          if (currentTimeFilter === 'month') {
+            const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            dateRange.textContent = `${startDate.toLocaleDateString('th-TH')} - ${endDate.toLocaleDateString('th-TH')}`;
+          } else if (currentTimeFilter === 'year') {
+            dateRange.textContent = `${today.getFullYear()}-01-01 ถึง ${today.getFullYear()}-12-31`;
+          } else {
+            dateRange.textContent = '';
+          }
+        }
+      }
+    }
+
+    // API Functions
+    async function fetchAPI(endpoint, options = {}) {
+      try {
+        const url = API_BASE + endpoint;
+        console.log('🌐 Fetching:', url);
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+          }
+        });
+        const result = await response.json();
+        console.log('📥 Response:', result);
+        return result;
+      } catch (error) {
+        console.error('❌ API Error:', error);
+        return { success: false, message: error.message };
+      }
+    }
+
+    // Load Categories
+    async function loadCategories() {
+      const result = await fetchAPI('/categories.php');
+      console.log('Categories:', result);
+      if (result.success) {
+        categories = result.data;
+        populateCategorySelect();
+      } else {
+        showToast('❌ ไม่สามารถโหลดหมวดหมู่ได้', 'error');
+      }
+    }
+
+    // Populate Category Select
+    function populateCategorySelect() {
+      const select = document.getElementById('category');
+      if (!select || !categories.length) return;
+      select.innerHTML = categories.map(cat =>
+        `<option value="${cat.id}">${cat.icon} ${cat.name_th}</option>`
+      ).join('');
+    }
+
+    // Load Dashboard Data
+    async function loadDashboard() {
+      console.log('🔄 loadDashboard called');
+      console.log('Filter:', currentTimeFilter, 'Month:', selectedMonth, 'Year:', selectedYear);
+      document.getElementById('dashboardLoading').classList.remove('hidden');
+      document.getElementById('dashboardContent').classList.add('hidden');
+      let queryParams = `?user_id=${USER_ID}&filter=${currentTimeFilter}`;
+      if (selectedMonth !== null && selectedYear !== null) {
+        queryParams += `&month=${selectedMonth}&year=${selectedYear}`;
+        console.log('📍 Query with month & year:', queryParams);
+      } else if (selectedYear !== null && selectedMonth === null) {
+        queryParams += `&year=${selectedYear}`;
+        console.log('📍 Query with year only:', queryParams);
+      }
+      const result = await fetchAPI(`/summary.php${queryParams}`);
+      console.log('📊 Dashboard result:', result);
+      if (result.success) {
+        updateDashboard(result.data);
+      } else {
+        showToast('❌ ไม่สามารถโหลดข้อมูลได้: ' + (result.message || ''), 'error');
+      }
+      document.getElementById('dashboardLoading').classList.add('hidden');
+      document.getElementById('dashboardContent').classList.remove('hidden');
+    }
+
+    // Update Dashboard
+    function updateDashboard(data) {
+      console.log('Updating dashboard with data:', data);
+      const { summary, monthly, categories: catData } = data;
+      document.getElementById('dashBalance').textContent = formatCurrency(summary.balance);
+      document.getElementById('dashIncome').textContent = formatCurrency(summary.total_income);
+      document.getElementById('dashExpense').textContent = formatCurrency(summary.total_expense);
+      document.getElementById('dashSavings').textContent = summary.savings_rate + '%';
+      updateCharts(data);
+      updateMonthlySummary(monthly);
+      updateTopExpenses(catData);
+    }
+
+    // Load Transactions
+    async function loadTransactions() {
+      const result = await fetchAPI(`/transactions.php?user_id=${USER_ID}&limit=500`);
+      console.log('Transactions:', result);
+      if (result.success) {
+        transactions = result.data;
+        renderTransactions();
+      } else {
+        document.getElementById('transactionList').innerHTML =
+          '<p class="text-red-500 text-center py-8">❌ ไม่สามารถโหลดข้อมูล</p>';
+      }
+    }
+
+    // Add Transaction
+    async function addTransaction(data) {
+      const submitBtn = document.getElementById('submitBtn');
+      const originalContent = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="loading-spinner w-6 h-6"></div>';
+      const result = await fetchAPI('/transactions.php', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalContent;
+      return result;
+    }
+
+    // Delete Transaction
+    async function deleteTransaction(id) {
+      if (!confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) return;
+      const result = await fetchAPI(`/transactions.php?user_id=${USER_ID}&id=${id}`, {
+        method: 'DELETE'
+      });
+      if (result.success) {
+        loadDashboard();
+        loadTransactions();
+        showToast('✓ ลบรายการสำเร็จ');
+      } else {
+        showToast('❌ ไม่สามารถลบได้', 'error');
+      }
+    }
+
+    // Tab Switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active', 'text-purple-600');
+        item.classList.add('text-gray-600');
+      });
+      document.getElementById(tabName).classList.add('active');
+      document.getElementById('tab-' + tabName).classList.add('active', 'text-purple-600');
+      document.getElementById('tab-' + tabName).classList.remove('text-gray-600');
+      if (tabName === 'dashboard') loadDashboard();
+      if (tabName === 'transactions') loadTransactions();
+    }
+
+    // Format Currency
+    function formatCurrency(amount) {
+      return '฿' + parseFloat(amount).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Format Date
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // Get Month Name
+    function getMonthName(monthIndex) {
+      const months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+      return months[monthIndex - 1] || months[0];
+    }
+
+    // Update Charts
+    function updateCharts(data) {
+      console.log('Updating charts...');
+      const ctx1 = document.getElementById('incomeExpenseChart');
+      const ctx2 = document.getElementById('categoryChart');
+      if (!ctx1 || !ctx2) {
+        console.error('Chart canvas not found!');
+        return;
+      }
+      if (incomeExpenseChart) {
+        incomeExpenseChart.destroy();
+        console.log('Destroyed old incomeExpenseChart');
+      }
+      if (categoryChart) {
+        categoryChart.destroy();
+        console.log('Destroyed old categoryChart');
+      }
+      let monthlyData = data.monthly || [];
+      const categoryData = data.categories || [];
+      console.log('Monthly data (before filter):', monthlyData);
+      if (selectedYear !== null) {
+        monthlyData = monthlyData.filter(m => parseInt(m.year) === selectedYear);
+        console.log('Filtered monthly data for year', selectedYear, ':', monthlyData);
+      }
+      if (selectedMonth !== null && selectedYear !== null) {
+        monthlyData = monthlyData.filter(m =>
+          parseInt(m.year) === selectedYear && parseInt(m.month) === selectedMonth
+        );
+        console.log('Filtered monthly data for', selectedMonth, '/', selectedYear, ':', monthlyData);
+      }
+      const chartData = monthlyData.slice(0, 12).reverse();
+      const monthlyLabels = chartData.map(m =>
+        `${getMonthName(parseInt(m.month))} ${parseInt(m.year) - 543}`
+      );
+      const incomeData = chartData.map(m => parseFloat(m.total_income || 0));
+      const expenseData = chartData.map(m => parseFloat(m.total_expense || 0));
+      if (ctx1) {
+        incomeExpenseChart = new Chart(ctx1, {
+          type: 'bar',
+          data: {
+            labels: monthlyLabels.length > 0 ? monthlyLabels : ['ไม่มีข้อมูล'],
+            datasets: [
+              {
+                label: 'รายรับ',
+                data: incomeData.length > 0 ? incomeData : [0],
+                backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                borderColor: 'rgba(16, 185, 129, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'รายจ่าย',
+                data: expenseData.length > 0 ? expenseData : [0],
+                backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                borderColor: 'rgba(239, 68, 68, 1)',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+        console.log('Created new incomeExpenseChart');
+      }
+      if (categoryData && categoryData.length > 0 && ctx2) {
+        const categoryLabels = categoryData.map(c => c.name_th);
+        const categoryValues = categoryData.map(c => parseFloat(c.total_amount || 0));
+        const categoryColors = categoryData.map(c => c.color);
+        categoryChart = new Chart(ctx2, {
+          type: 'doughnut',
+          data: {
+            labels: categoryLabels,
+            datasets: [{
+              data: categoryValues,
+              backgroundColor: categoryColors
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+        console.log('Created new categoryChart');
+      }
+    }
+
+    // Update Monthly Summary
+    function updateMonthlySummary(monthly) {
+      const tbody = document.getElementById('monthlySummary');
+      if (!tbody) return;
+      let filteredMonthly = monthly || [];
+      if (selectedYear !== null) {
+        filteredMonthly = filteredMonthly.filter(m => parseInt(m.year) === selectedYear);
+        console.log('Filtered monthly summary for year', selectedYear, ':', filteredMonthly);
+      }
+      if (!filteredMonthly || filteredMonthly.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">ยังไม่มีข้อมูล</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filteredMonthly.slice(0, 12).map(m => {
+        const balance = parseFloat(m.total_income || 0) - parseFloat(m.total_expense || 0);
+        const monthName = getMonthName(parseInt(m.month));
+        const yearBE = parseInt(m.year) - 543;
+        return `
 <tr class="border-b hover:bg-gray-50">
 <td class="px-4 py-3">${monthName} ${yearBE}</td>
 <td class="px-4 py-3 text-right income-text">${formatCurrency(m.total_income)}</td>
@@ -922,20 +983,20 @@
 <td class="px-4 py-3 text-right font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}">${formatCurrency(balance)}</td>
 </tr>
 `;
-   }).join('');
-   console.log('Updated monthly summary with', filteredMonthly.length, 'months');
-  }
+      }).join('');
+      console.log('Updated monthly summary with', filteredMonthly.length, 'months');
+    }
 
-  // Update Top Expenses
-  function updateTopExpenses(catData) {
-   const container = document.getElementById('topExpenses');
-   if (!container) return;
-   if (!catData || catData.length === 0) {
-    container.innerHTML = '<p class="text-gray-500 text-center py-4">ยังไม่มีข้อมูล</p>';
-    return;
-   }
-   const maxAmount = parseFloat(catData[0].total_amount || 1);
-   container.innerHTML = catData.slice(0, 5).map((c, i) => `
+    // Update Top Expenses
+    function updateTopExpenses(catData) {
+      const container = document.getElementById('topExpenses');
+      if (!container) return;
+      if (!catData || catData.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-4">ยังไม่มีข้อมูล</p>';
+        return;
+      }
+      const maxAmount = parseFloat(catData[0].total_amount || 1);
+      container.innerHTML = catData.slice(0, 5).map((c, i) => `
 <div class="flex items-center space-x-4">
 <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold">${i + 1}</div>
 <div class="flex-1">
@@ -949,24 +1010,51 @@
 </div>
 </div>
 `).join('');
-  }
+    }
 
-  // Render Transactions
-  function renderTransactions() {
-   const list = document.getElementById('transactionList');
-   if (!list) return;
-   const searchTerm = document.getElementById('searchTransaction').value.toLowerCase();
-   const filterType = document.getElementById('filterType').value;
-   let filtered = transactions.filter(t => {
-    const matchSearch = t.description.toLowerCase().includes(searchTerm);
-    const matchType = filterType === 'all' || t.type === filterType;
-    return matchSearch && matchType;
-   });
-   if (filtered.length === 0) {
-    list.innerHTML = '<p class="text-gray-500 text-center py-8">ไม่พบรายการ</p>';
-    return;
-   }
-   list.innerHTML = filtered.map(t => `
+    // 🔥 Render Transactions - แก้ไขใหม่ ให้กรองตามเดือน/ปี
+    function renderTransactions() {
+      const list = document.getElementById('transactionList');
+      if (!list) return;
+
+      const searchTerm = document.getElementById('searchTransaction').value.toLowerCase();
+      const filterType = document.getElementById('filterType').value;
+      const transMonth = document.getElementById('transMonthSelect').value;
+      const transYear = document.getElementById('transYearSelect').value;
+
+      // กรองข้อมูล
+      let filtered = transactions.filter(t => {
+        const transDate = new Date(t.transaction_date);
+        const tMonth = transDate.getMonth() + 1;
+        const tYear = transDate.getFullYear();
+
+        // กรองตามคำค้นหา
+        const matchSearch = t.description.toLowerCase().includes(searchTerm);
+
+        // กรองตามประเภท
+        const matchType = filterType === 'all' || t.type === filterType;
+
+        // กรองตามเดือน
+        const matchMonth = !transMonth || tMonth === parseInt(transMonth);
+
+        // กรองตามปี
+        const matchYear = !transYear || tYear === parseInt(transYear);
+
+        return matchSearch && matchType && matchMonth && matchYear;
+      });
+
+      // เรียงลำดับจากใหม่ไปเก่า
+      filtered.sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
+
+      // อัปเดตสรุปตัวกรอง
+      updateFilterSummary(filtered.length, transactions.length);
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<p class="text-gray-500 text-center py-8">ไม่พบรายการที่ตรงกับตัวกรอง</p>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(t => `
 <div class="transaction-item flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
 <div class="flex items-center space-x-3">
 <div class="w-10 h-10 rounded-full flex items-center justify-center ${t.type === 'income' ? 'bg-green-100' : 'bg-red-100'}">
@@ -989,126 +1077,148 @@ ${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}
 </div>
 </div>
 `).join('');
-  }
-
-  // Refresh Transactions
-  function refreshTransactions() {
-   loadTransactions();
-   showToast('✓ รีเฟรชสำเร็จ');
-  }
-
-  // Show Toast
-  function showToast(message, type = 'success') {
-   const toast = document.getElementById('toast');
-   toast.textContent = message;
-   toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50 ${type === 'error' ? 'bg-red-500' : 'bg-green-500'
-    } text-white translate-y-0 opacity-100`;
-   setTimeout(() => {
-    toast.className = 'fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50 translate-y-20 opacity-0';
-   }, 3000);
-  }
-
-  // Form Submit
-  document.getElementById('transactionForm').addEventListener('submit', async function (e) {
-   e.preventDefault();
-   const data = {
-    user_id: USER_ID,
-    type: document.getElementById('type').value,
-    category_id: document.getElementById('category').value,
-    amount: parseFloat(document.getElementById('amount').value),
-    description: document.getElementById('description').value,
-    transaction_date: document.getElementById('date').value
-   };
-   console.log('Submitting:', data);
-   const result = await addTransaction(data);
-   console.log('Result:', result);
-   if (result.success) {
-    showToast('✓ บันทึกสำเร็จ');
-    this.reset();
-    document.getElementById('date').valueAsDate = new Date();
-    document.getElementById('aiResult').classList.remove('show');
-    loadDashboard();
-    loadTransactions();
-   } else {
-    showToast('❌ ' + (result.message || 'บันทึกไม่สำเร็จ'), 'error');
-   }
-  });
-
-  // Search Handler
-  document.getElementById('searchTransaction').addEventListener('input', renderTransactions);
-
-  // AI Analysis
-  async function analyzeText(text) {
-   if (!text || text.length < 2) {
-    document.getElementById('aiLoading').classList.add('hidden');
-    document.getElementById('aiResult').classList.remove('show');
-    return;
-   }
-   document.getElementById('aiLoading').classList.remove('hidden');
-   document.getElementById('aiResult').classList.remove('show');
-   clearTimeout(aiTimeout);
-   aiTimeout = setTimeout(async () => {
-    try {
-     const result = await fetchAPI('/ai-analyze.php', {
-      method: 'POST',
-      body: JSON.stringify({ text: text })
-     });
-     document.getElementById('aiLoading').classList.add('hidden');
-     if (result.success) {
-      const data = result.data;
-      document.getElementById('aiResult').classList.add('show');
-      document.getElementById('aiType').textContent = data.type === 'income' ? '💰 รายรับ' : '💸 รายจ่าย';
-      document.getElementById('aiType').className = data.type === 'income' ? 'font-bold text-lg income-text' : 'font-bold text-lg expense-text';
-      document.getElementById('aiAmount').textContent = '฿' + parseFloat(data.amount).toLocaleString('th-TH');
-      const categoryMap = {
-       'food': 'อาหาร', 'transport': 'การเดินทาง', 'shopping': 'ช้อปปิ้ง',
-       'entertainment': 'ความบันเทิง', 'bills': 'ค่าบิล', 'health': 'สุขภาพ',
-       'education': 'การศึกษา', 'salary': 'เงินเดือน', 'bonus': 'โบนัส',
-       'investment': 'การลงทุน', 'other': 'อื่นๆ'
-      };
-      document.getElementById('aiCategory').textContent = categoryMap[data.category] || 'อื่นๆ';
-      document.getElementById('type').value = data.type;
-      if (data.amount > 0) {
-       document.getElementById('amount').value = data.amount;
-      }
-      document.getElementById('description').value = data.description;
-      const categorySelect = document.getElementById('category');
-      const categoryOption = Array.from(categorySelect.options).find(opt => {
-       const catName = opt.text.toLowerCase();
-       const targetName = (categoryMap[data.category] || '').toLowerCase();
-       return catName.includes(targetName) || targetName.includes(catName);
-      });
-      if (categoryOption) {
-       categorySelect.value = categoryOption.value;
-      }
-     } else {
-      showToast('❌ AI วิเคราะห์ไม่สำเร็จ', 'error');
-     }
-    } catch (error) {
-     document.getElementById('aiLoading').classList.add('hidden');
-     console.error('AI Error:', error);
     }
-   }, 500);
-  }
 
-  document.getElementById('aiInput').addEventListener('input', function (e) {
-   analyzeText(e.target.value);
-  });
+    // Update Filter Summary
+    function updateFilterSummary(showing, total) {
+      const summary = document.getElementById('filterSummary');
+      if (!summary) return;
 
-  function fillExample(text) {
-   document.getElementById('aiInput').value = text;
-   analyzeText(text);
-  }
+      const transMonth = document.getElementById('transMonthSelect').value;
+      const transYear = document.getElementById('transYearSelect').value;
+      const filterType = document.getElementById('filterType').value;
 
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', function () {
-   console.log('🚀 Page loaded, initializing...');
-   document.getElementById('date').valueAsDate = new Date();
-   initYearSelect();
-   loadCategories();
-   loadDashboard();
-  });
- </script>
+      let filterText = `แสดง ${showing} จาก ${total} รายการ`;
+
+      const filters = [];
+      if (transMonth) filters.push(`เดือน ${monthNames[transMonth]}`);
+      if (transYear) filters.push(`ปี ${parseInt(transYear) + 543}`);
+      if (filterType !== 'all') {
+        filters.push(filterType === 'income' ? 'รายรับ' : 'รายจ่าย');
+      }
+
+      if (filters.length > 0) {
+        filterText += ` (${filters.join(', ')})`;
+      }
+
+      summary.textContent = filterText;
+    }
+
+    // Refresh Transactions
+    function refreshTransactions() {
+      loadTransactions();
+      showToast('✓ รีเฟรชสำเร็จ');
+    }
+
+    // Show Toast
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50 ${type === 'error' ? 'bg-red-500' : 'bg-green-500'
+        } text-white translate-y-0 opacity-100`;
+      setTimeout(() => {
+        toast.className = 'fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50 translate-y-20 opacity-0';
+      }, 3000);
+    }
+
+    // Form Submit
+    document.getElementById('transactionForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const data = {
+        user_id: USER_ID,
+        type: document.getElementById('type').value,
+        category_id: document.getElementById('category').value,
+        amount: parseFloat(document.getElementById('amount').value),
+        description: document.getElementById('description').value,
+        transaction_date: document.getElementById('date').value
+      };
+      console.log('Submitting:', data);
+      const result = await addTransaction(data);
+      console.log('Result:', result);
+      if (result.success) {
+        showToast('✓ บันทึกสำเร็จ');
+        this.reset();
+        document.getElementById('date').valueAsDate = new Date();
+        document.getElementById('aiResult').classList.remove('show');
+        loadDashboard();
+        loadTransactions();
+      } else {
+        showToast('❌ ' + (result.message || 'บันทึกไม่สำเร็จ'), 'error');
+      }
+    });
+
+    // AI Analysis
+    async function analyzeText(text) {
+      if (!text || text.length < 2) {
+        document.getElementById('aiLoading').classList.add('hidden');
+        document.getElementById('aiResult').classList.remove('show');
+        return;
+      }
+      document.getElementById('aiLoading').classList.remove('hidden');
+      document.getElementById('aiResult').classList.remove('show');
+      clearTimeout(aiTimeout);
+      aiTimeout = setTimeout(async () => {
+        try {
+          const result = await fetchAPI('/ai-analyze.php', {
+            method: 'POST',
+            body: JSON.stringify({ text: text })
+          });
+          document.getElementById('aiLoading').classList.add('hidden');
+          if (result.success) {
+            const data = result.data;
+            document.getElementById('aiResult').classList.add('show');
+            document.getElementById('aiType').textContent = data.type === 'income' ? '💰 รายรับ' : '💸 รายจ่าย';
+            document.getElementById('aiType').className = data.type === 'income' ? 'font-bold text-lg income-text' : 'font-bold text-lg expense-text';
+            document.getElementById('aiAmount').textContent = '฿' + parseFloat(data.amount).toLocaleString('th-TH');
+            const categoryMap = {
+              'food': 'อาหาร', 'transport': 'การเดินทาง', 'shopping': 'ช้อปปิ้ง',
+              'entertainment': 'ความบันเทิง', 'bills': 'ค่าบิล', 'health': 'สุขภาพ',
+              'education': 'การศึกษา', 'salary': 'เงินเดือน', 'bonus': 'โบนัส',
+              'investment': 'การลงทุน', 'other': 'อื่นๆ'
+            };
+            document.getElementById('aiCategory').textContent = categoryMap[data.category] || 'อื่นๆ';
+            document.getElementById('type').value = data.type;
+            if (data.amount > 0) {
+              document.getElementById('amount').value = data.amount;
+            }
+            document.getElementById('description').value = data.description;
+            const categorySelect = document.getElementById('category');
+            const categoryOption = Array.from(categorySelect.options).find(opt => {
+              const catName = opt.text.toLowerCase();
+              const targetName = (categoryMap[data.category] || '').toLowerCase();
+              return catName.includes(targetName) || targetName.includes(catName);
+            });
+            if (categoryOption) {
+              categorySelect.value = categoryOption.value;
+            }
+          } else {
+            showToast('❌ AI วิเคราะห์ไม่สำเร็จ', 'error');
+          }
+        } catch (error) {
+          document.getElementById('aiLoading').classList.add('hidden');
+          console.error('AI Error:', error);
+        }
+      }, 500);
+    }
+
+    document.getElementById('aiInput').addEventListener('input', function (e) {
+      analyzeText(e.target.value);
+    });
+
+    function fillExample(text) {
+      document.getElementById('aiInput').value = text;
+      analyzeText(text);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('🚀 Page loaded, initializing...');
+      document.getElementById('date').valueAsDate = new Date();
+      initYearSelect();
+      loadCategories();
+      loadDashboard();
+    });
+  </script>
 </body>
 
 </html>

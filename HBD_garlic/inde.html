@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Happy Birthday</title>
+ <link
+  href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Kanit:wght@200;300;400;600&display=swap"
+  rel="stylesheet">
+
+ <style>
+  /* ============================================
+           RESET & BASE
+           ============================================ */
+  *,
+  *::before,
+  *::after {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+  }
+
+  html {
+   scroll-behavior: smooth;
+  }
+
+  body {
+   font-family: 'Kanit', sans-serif;
+   background: #0a0a0a;
+   color: #f5f0e8;
+   overflow-x: hidden;
+   min-height: 100vh;
+  }
+
+  /* ============================================
+           BACKGROUNDS & CANVASES
+           ============================================ */
+  .bg-gradient {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background:
+    radial-gradient(ellipse at 20% 50%, rgba(180, 140, 60, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(200, 160, 70, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #0a0a0a 0%, #111 50%, #0a0a0a 100%);
+   z-index: 0;
+  }
+
+  #glitterCanvas {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 1;
+   pointer-events: none;
+  }
+
+  #confettiCanvas {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 99;
+   pointer-events: none;
+  }
+
+  /* ============================================
+           SPLASH SCREEN (หน้าแรก)
+           ============================================ */
+  #splash-screen {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   background: radial-gradient(circle at center, #151520 0%, #08080c 100%);
+   z-index: 100;
+   transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  #splash-screen.hidden {
+   opacity: 0;
+   visibility: hidden;
+   pointer-events: none;
+  }
+
+  /* Gift Box CSS */
+  .gift-wrapper {
+   position: relative;
+   width: 150px;
+   height: 130px;
+   margin-bottom: 50px;
+   animation: giftFloat 3s ease-in-out infinite;
+   cursor: pointer;
+  }
+
+  .gift-box {
+   position: absolute;
+   bottom: 0;
+   width: 150px;
+   height: 90px;
+   background: linear-gradient(135deg, #d4af37 0%, #a67c00 100%);
+   border-radius: 6px;
+   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.3);
+  }
+
+  .gift-lid {
+   position: absolute;
+   top: -15px;
+   width: 165px;
+   height: 35px;
+   background: linear-gradient(135deg, #e6c250 0%, #c9a84c 100%);
+   border-radius: 8px 8px 4px 4px;
+   left: -7.5px;
+   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+   animation: lidWiggle 3s ease-in-out infinite;
+  }
+
+  .ribbon-v {
+   position: absolute;
+   width: 22px;
+   height: 100%;
+   background: #dc143c;
+   left: 50%;
+   transform: translateX(-50%);
+  }
+
+  .ribbon-h {
+   position: absolute;
+   width: 100%;
+   height: 22px;
+   top: 50%;
+   transform: translateY(-50%);
+   background: #dc143c;
+  }
+
+  .bow {
+   position: absolute;
+   top: -25px;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 60px;
+   height: 30px;
+   z-index: 2;
+  }
+
+  .bow::before,
+  .bow::after {
+   content: '';
+   position: absolute;
+   width: 32px;
+   height: 28px;
+   background: #dc143c;
+   border-radius: 50% 50% 0 50%;
+   top: 6px;
+  }
+
+  .bow::before {
+   left: -2px;
+   transform: rotate(-15deg);
+  }
+
+  .bow::after {
+   right: -2px;
+   border-radius: 50% 50% 50% 0;
+   transform: rotate(15deg);
+  }
+
+  .bow-center {
+   position: absolute;
+   width: 18px;
+   height: 18px;
+   background: #8b0000;
+   border-radius: 50%;
+   top: 14px;
+   left: 50%;
+   transform: translateX(-50%);
+   z-index: 3;
+   box-shadow: 0 0 8px rgba(220, 20, 60, 0.6);
+  }
+
+  /* Button */
+  .btn-open {
+   font-family: 'Kanit', sans-serif;
+   font-weight: 300;
+   font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+   letter-spacing: 2px;
+   padding: 18px 40px;
+   background: transparent;
+   color: #f5e6a3;
+   border: 2px solid rgba(201, 168, 76, 0.6);
+   border-radius: 50px;
+   cursor: pointer;
+   position: relative;
+   overflow: hidden;
+   transition: all 0.4s ease;
+   animation: btnPulse 2s ease-in-out infinite;
+  }
+
+  .btn-open:hover {
+   background: linear-gradient(135deg, rgba(201, 168, 76, 0.15), rgba(201, 168, 76, 0.05));
+   border-color: #c9a84c;
+   transform: scale(1.05);
+   box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
+  }
+
+  .btn-open::after {
+   content: '✨';
+   position: absolute;
+   right: 15px;
+   top: 50%;
+   transform: translateY(-50%);
+   animation: sparkle 1.5s infinite;
+  }
+
+  /* ============================================
+           MAIN CONTENT
+           ============================================ */
+  #main-content {
+   position: relative;
+   z-index: 10;
+   max-width: 900px;
+   margin: 0 auto;
+   padding: 40px 20px;
+   opacity: 0;
+   transform: scale(0.95);
+   transition: opacity 1s ease, transform 1s ease;
+   pointer-events: none;
+  }
+
+  #main-content.visible {
+   opacity: 1;
+   transform: scale(1);
+   pointer-events: auto;
+  }
+
+  .content-section {
+   text-align: center;
+   padding: 60px 20px;
+   animation: fadeInUp 1.2s ease-out both;
+  }
+
+  .content-section:nth-child(2) {
+   animation-delay: 0.2s;
+  }
+
+  .content-section:nth-child(3) {
+   animation-delay: 0.4s;
+  }
+
+  .content-section:nth-child(4) {
+   animation-delay: 0.6s;
+  }
+
+  .pre-text {
+   font-weight: 200;
+   font-size: 1rem;
+   letter-spacing: 8px;
+   text-transform: uppercase;
+   color: rgba(200, 170, 100, 0.7);
+   margin-bottom: 20px;
+  }
+
+  .main-title {
+   font-family: 'Great Vibes', cursive;
+   font-size: clamp(3rem, 8vw, 6rem);
+   color: transparent;
+   background: linear-gradient(135deg, #c9a84c, #f5e6a3, #d4a843, #f5e6a3, #c9a84c);
+   background-size: 200% auto;
+   -webkit-background-clip: text;
+   background-clip: text;
+   animation: goldShimmer 4s linear infinite;
+   line-height: 1.3;
+   margin-bottom: 10px;
+   filter: drop-shadow(0 0 30px rgba(200, 170, 80, 0.3));
+  }
+
+  .sub-title {
+   font-family: 'Cormorant Garamond', serif;
+   font-weight: 300;
+   font-style: italic;
+   font-size: clamp(1.2rem, 3vw, 1.8rem);
+   color: rgba(245, 230, 195, 0.8);
+   margin-bottom: 30px;
+   letter-spacing: 2px;
+  }
+
+  .name-display {
+   font-family: 'Great Vibes', cursive;
+   font-size: clamp(2.5rem, 7vw, 5rem);
+   color: #fff;
+   text-shadow: 0 0 40px rgba(200, 170, 80, 0.4);
+   margin-bottom: 15px;
+  }
+
+  .divider {
+   width: 120px;
+   height: 1px;
+   margin: 30px auto;
+   background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  }
+
+  .message {
+   font-weight: 300;
+   font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+   line-height: 2;
+   color: rgba(245, 230, 195, 0.7);
+   max-width: 600px;
+   margin: 0 auto;
+  }
+
+  /* Countdown */
+  .countdown-label {
+   font-weight: 200;
+   font-size: 0.9rem;
+   letter-spacing: 6px;
+   text-transform: uppercase;
+   color: rgba(200, 170, 100, 0.6);
+   margin-bottom: 30px;
+  }
+
+  .countdown-container {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 15px;
+   flex-wrap: wrap;
+  }
+
+  .countdown-item {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   min-width: 90px;
+  }
+
+  .countdown-value {
+   font-family: 'Cormorant Garamond', serif;
+   font-weight: 300;
+   font-size: clamp(2.5rem, 6vw, 4rem);
+   color: #fff;
+   line-height: 1;
+   padding: 20px 10px;
+   min-width: 80px;
+   background: linear-gradient(145deg, rgba(200, 170, 80, 0.1), rgba(200, 170, 80, 0.02));
+   border: 1px solid rgba(200, 170, 80, 0.15);
+   border-radius: 12px;
+   backdrop-filter: blur(10px);
+  }
+
+  .countdown-unit {
+   font-weight: 200;
+   font-size: 0.7rem;
+   letter-spacing: 3px;
+   text-transform: uppercase;
+   color: rgba(200, 170, 100, 0.6);
+   margin-top: 10px;
+  }
+
+  .countdown-separator {
+   font-family: 'Cormorant Garamond', serif;
+   font-size: 2rem;
+   color: rgba(200, 170, 80, 0.3);
+   animation: blink 1.5s ease-in-out infinite;
+   margin-top: -20px;
+  }
+
+  /* Carousel */
+  .carousel-title {
+   font-family: 'Cormorant Garamond', serif;
+   font-weight: 300;
+   font-style: italic;
+   font-size: clamp(1.2rem, 3vw, 1.6rem);
+   color: rgba(245, 230, 195, 0.7);
+   margin-bottom: 40px;
+   letter-spacing: 2px;
+  }
+
+  .carousel-wrapper {
+   position: relative;
+   width: 100%;
+   max-width: 700px;
+   margin: 0 auto;
+   aspect-ratio: 4/3;
+   border-radius: 16px;
+   overflow: hidden;
+   border: 1px solid rgba(200, 170, 80, 0.15);
+   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(200, 170, 80, 0.05);
+  }
+
+  .carousel-slide {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   opacity: 0;
+   transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
+   transform: scale(1.05);
+  }
+
+  .carousel-slide.active {
+   opacity: 1;
+   transform: scale(1);
+  }
+
+  .carousel-slide img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+  }
+
+  .carousel-slide .placeholder {
+   width: 100%;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   font-family: 'Great Vibes', cursive;
+   font-size: 2rem;
+   color: rgba(255, 255, 255, 0.8);
+  }
+
+  .slide-1 .placeholder {
+   background: linear-gradient(135deg, #1a1510, #2a2015, #1a1510);
+  }
+
+  .slide-2 .placeholder {
+   background: linear-gradient(135deg, #15151a, #1a1a25, #15151a);
+  }
+
+  .slide-3 .placeholder {
+   background: linear-gradient(135deg, #1a1015, #251520, #1a1015);
+  }
+
+  .slide-4 .placeholder {
+   background: linear-gradient(135deg, #101a15, #152520, #101a15);
+  }
+
+  .slide-5 .placeholder {
+   background: linear-gradient(135deg, #1a1a10, #252515, #1a1a10);
+  }
+
+  .placeholder .icon {
+   font-size: 3rem;
+   margin-bottom: 15px;
+   opacity: 0.6;
+  }
+
+  .placeholder .caption {
+   font-family: 'Kanit', sans-serif;
+   font-weight: 300;
+   font-size: 0.85rem;
+   letter-spacing: 2px;
+   color: rgba(200, 170, 100, 0.6);
+   margin-top: 10px;
+  }
+
+  .carousel-indicators {
+   display: flex;
+   justify-content: center;
+   gap: 10px;
+   margin-top: 25px;
+  }
+
+  .carousel-dot {
+   width: 8px;
+   height: 8px;
+   border-radius: 50%;
+   background: rgba(200, 170, 80, 0.2);
+   border: 1px solid rgba(200, 170, 80, 0.3);
+   cursor: pointer;
+   transition: all 0.4s ease;
+  }
+
+  .carousel-dot.active {
+   background: #c9a84c;
+   box-shadow: 0 0 10px rgba(200, 170, 80, 0.5);
+   transform: scale(1.3);
+  }
+
+  /* Wish Card */
+  .wish-card {
+   max-width: 600px;
+   margin: 0 auto;
+   padding: 50px 40px;
+   background: linear-gradient(145deg, rgba(200, 170, 80, 0.05), rgba(200, 170, 80, 0.02));
+   border: 1px solid rgba(200, 170, 80, 0.12);
+   border-radius: 20px;
+   backdrop-filter: blur(20px);
+   position: relative;
+   overflow: hidden;
+  }
+
+  .wish-card::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: -100%;
+   width: 100%;
+   height: 1px;
+   background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+   animation: shimmerLine 3s ease-in-out infinite;
+  }
+
+  .quote-mark {
+   font-family: 'Cormorant Garamond', serif;
+   font-size: 4rem;
+   color: rgba(200, 170, 80, 0.2);
+   line-height: 1;
+   margin-bottom: -10px;
+  }
+
+  .wish-text {
+   font-weight: 300;
+   font-size: clamp(1rem, 2.5vw, 1.1rem);
+   line-height: 2.2;
+   color: rgba(245, 230, 195, 0.75);
+  }
+
+  .wish-text em {
+   color: rgba(200, 170, 100, 0.9);
+   font-style: normal;
+  }
+
+  .signature {
+   font-family: 'Great Vibes', cursive;
+   font-size: 1.8rem;
+   color: rgba(200, 170, 100, 0.8);
+   margin-top: 30px;
+  }
+
+  .footer {
+   text-align: center;
+   padding: 40px 20px 60px;
+  }
+
+  .cake-icon {
+   font-size: 2rem;
+   margin-bottom: 15px;
+   animation: float 3s ease-in-out infinite;
+  }
+
+  .footer-text {
+   font-weight: 200;
+   font-size: 0.75rem;
+   letter-spacing: 4px;
+   text-transform: uppercase;
+   color: rgba(200, 170, 100, 0.3);
+  }
+
+  /* ============================================
+           ANIMATIONS
+           ============================================ */
+  @keyframes giftFloat {
+
+   0%,
+   100% {
+    transform: translateY(0) rotate(0deg);
+   }
+
+   50% {
+    transform: translateY(-12px) rotate(2deg);
+   }
+  }
+
+  @keyframes lidWiggle {
+
+   0%,
+   100% {
+    transform: rotate(0deg);
+   }
+
+   25% {
+    transform: rotate(-3deg) translateY(-2px);
+   }
+
+   75% {
+    transform: rotate(3deg) translateY(2px);
+   }
+  }
+
+  @keyframes btnPulse {
+
+   0%,
+   100% {
+    box-shadow: 0 0 0 rgba(201, 168, 76, 0);
+   }
+
+   50% {
+    box-shadow: 0 0 20px rgba(201, 168, 76, 0.4);
+   }
+  }
+
+  @keyframes sparkle {
+
+   0%,
+   100% {
+    opacity: 0.5;
+    transform: translateY(-50%) scale(1);
+   }
+
+   50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+   }
+  }
+
+  @keyframes fadeInUp {
+   from {
+    opacity: 0;
+    transform: translateY(40px);
+   }
+
+   to {
+    opacity: 1;
+    transform: translateY(0);
+   }
+  }
+
+  @keyframes goldShimmer {
+   0% {
+    background-position: -200% center;
+   }
+
+   100% {
+    background-position: 200% center;
+   }
+  }
+
+  @keyframes blink {
+
+   0%,
+   100% {
+    opacity: 0.3;
+   }
+
+   50% {
+    opacity: 0.8;
+   }
+  }
+
+  @keyframes shimmerLine {
+   0% {
+    left: -100%;
+   }
+
+   50% {
+    left: 100%;
+   }
+
+   100% {
+    left: 100%;
+   }
+  }
+
+  @keyframes float {
+
+   0%,
+   100% {
+    transform: translateY(0);
+   }
+
+   50% {
+    transform: translateY(-10px);
+   }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+   width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+   background: #0a0a0a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+   background: rgba(200, 170, 80, 0.3);
+   border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+   background: rgba(200, 170, 80, 0.5);
+  }
+
+  @media (max-width: 600px) {
+   #main-content {
+    padding: 20px 15px;
+   }
+
+   .countdown-container {
+    gap: 8px;
+   }
+
+   .countdown-item {
+    min-width: 70px;
+   }
+
+   .countdown-value {
+    padding: 15px 8px;
+    min-width: 65px;
+   }
+
+   .wish-card {
+    padding: 35px 25px;
+   }
+
+   .carousel-wrapper {
+    border-radius: 12px;
+   }
+  }
+ </style>
+</head>
+
+<body>
+
+ <div class="bg-gradient"></div>
+ <canvas id="glitterCanvas"></canvas>
+ <canvas id="confettiCanvas"></canvas>
+
+ <!-- ===== SPLASH SCREEN ===== -->
+ <section id="splash-screen">
+  <div class="gift-wrapper">
+   <div class="gift-lid"></div>
+   <div class="gift-box">
+    <div class="ribbon-v"></div>
+    <div class="ribbon-h"></div>
+    <div class="bow">
+     <div class="bow-center"></div>
+    </div>
+   </div>
+  </div>
+  <button id="open-btn" class="btn-open">คลิกเพื่อเปิดกล่องของขวัญของคุณ</button>
+ </section>
+
+ <!-- ===== MAIN CONTENT ===== -->
+ <div id="main-content">
+  <section class="content-section">
+   <p class="pre-text">✦ Special Day ✦</p>
+   <h1 class="main-title">Happy Birthday</h1>
+   <p class="sub-title">วันแห่งความสุขที่พิเศษที่สุด</p>
+   <div class="divider"></div>
+   <p class="name-display">ชื่อผู้ใหญ่</p>
+   <div class="divider"></div>
+   <p class="message">ในวาระวันคล้ายวันเกิดปีนี้ ขออวยพรให้ท่านมีสุขภาพแข็งแรง ประสบแต่ความสุขความเจริญ
+    คิดสิ่งใดสมความปรารถนาทุกประการ และมีความสุขตลอดไป ✨</p>
+  </section>
+
+  <section class="content-section">
+   <p class="countdown-label">Countdown to the Celebration</p>
+   <div class="countdown-container">
+    <div class="countdown-item"><span class="countdown-value" id="days">00</span><span
+      class="countdown-unit">Days</span></div>
+    <span class="countdown-separator">:</span>
+    <div class="countdown-item"><span class="countdown-value" id="hours">00</span><span
+      class="countdown-unit">Hours</span></div>
+    <span class="countdown-separator">:</span>
+    <div class="countdown-item"><span class="countdown-value" id="minutes">00</span><span
+      class="countdown-unit">Minutes</span></div>
+    <span class="countdown-separator">:</span>
+    <div class="countdown-item"><span class="countdown-value" id="seconds">00</span><span
+      class="countdown-unit">Seconds</span></div>
+   </div>
+  </section>
+
+  <section class="content-section">
+   <p class="carousel-title">✦</p>
+   <div class="carousel-wrapper" id="carousel">
+    <div class="carousel-slide slide-1 active">
+     <div class="placeholder"><span class="icon">📸</span><span>รูปที่ 1</span><span
+       class="caption">ใส่รูปภาพของคุณที่นี่</span></div>
+    </div>
+    <div class="carousel-slide slide-2">
+     <div class="placeholder"><span class="icon">🎂</span><span>รูปที่ 2</span><span
+       class="caption">ใส่รูปภาพของคุณที่นี่</span></div>
+    </div>
+    <div class="carousel-slide slide-3">
+     <div class="placeholder"><span class="icon">🌟</span><span>รูปที่ 3</span><span
+       class="caption">ใส่รูปภาพของคุณที่นี่</span></div>
+    </div>
+    <div class="carousel-slide slide-4">
+     <div class="placeholder"><span class="icon">💐</span><span>รูปที่ 4</span><span
+       class="caption">ใส่รูปภาพของคุณที่นี่</span></div>
+    </div>
+    <div class="carousel-slide slide-5">
+     <div class="placeholder"><span class="icon">🎁</span><span>รูปที่ 5</span><span
+       class="caption">ใส่รูปภาพของคุณที่นี่</span></div>
+    </div>
+   </div>
+   <div class="carousel-indicators" id="carouselIndicators"></div>
+  </section>
+
+  <section class="content-section">
+   <div class="wish-card">
+    <div class="quote-mark">❝</div>
+    <p class="wish-text">ขอให้ปีนี้เป็นปีที่ดีที่สุดของท่าน<br>เต็มไปด้วย <em>ความสุข</em> <em>สุขภาพที่ดี</em>
+     และ<em>รอยยิ้ม</em><br>ในทุกๆ วัน ขอบคุณสำหรับทุกสิ่งดีๆ ที่ท่านได้มอบให้เสมอมา</p>
+    <p class="signature">With Love ♥</p>
+   </div>
+  </section>
+
+  <footer class="footer">
+   <div class="cake-icon">🎂</div>
+   <p class="footer-text">Made with Love</p>
+  </footer>
+ </div>
+
+ <script>
+  /* ============================================
+     GOLD GLITTER PARTICLES (พื้นหลัง)
+     ============================================ */
+  const canvas = document.getElementById('glitterCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let animationId;
+
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  class Particle {
+   constructor() { this.reset(); }
+   reset() {
+    this.x = Math.random() * canvas.width; this.y = Math.random() * -canvas.height;
+    this.size = Math.random() * 2.5 + 0.5; this.speedY = Math.random() * 0.5 + 0.15;
+    this.speedX = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.7 + 0.3;
+    this.twinkleSpeed = Math.random() * 0.02 + 0.005; this.twinkleOffset = Math.random() * Math.PI * 2;
+    this.rotation = Math.random() * Math.PI * 2; this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+    const goldColors = [{ r: 201, g: 168, b: 76 }, { r: 245, g: 230, b: 163 }, { r: 212, g: 168, b: 67 }, { r: 255, g: 215, b: 100 }, { r: 180, g: 150, b: 60 }, { r: 255, g: 255, b: 255 }];
+    this.color = goldColors[Math.floor(Math.random() * goldColors.length)];
+   }
+   update() {
+    this.y += this.speedY; this.x += this.speedX + Math.sin(this.y * 0.01) * 0.2; this.rotation += this.rotationSpeed;
+    if (this.y > canvas.height + 10) { this.reset(); this.y = -10; }
+   }
+   draw() {
+    const twinkle = Math.sin(Date.now() * this.twinkleSpeed + this.twinkleOffset) * 0.3 + 0.7;
+    const alpha = this.opacity * twinkle; ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation); ctx.globalAlpha = alpha;
+    if (this.size > 1.5) {
+     ctx.beginPath(); ctx.moveTo(0, -this.size); ctx.lineTo(this.size * 0.6, 0); ctx.lineTo(0, this.size); ctx.lineTo(-this.size * 0.6, 0); ctx.closePath();
+     ctx.fillStyle = `rgba(${this.color.r},${this.color.g},${this.color.b},${alpha})`; ctx.fill(); ctx.shadowBlur = 10; ctx.shadowColor = `rgba(${this.color.r},${this.color.g},${this.color.b},0.5)`; ctx.fill();
+    } else { ctx.beginPath(); ctx.arc(0, 0, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(${this.color.r},${this.color.g},${this.color.b},${alpha})`; ctx.fill(); }
+    ctx.restore();
+   }
+  }
+  function initParticles() { particles = []; const count = Math.min(Math.floor((canvas.width * canvas.height) / 8000), 200); for (let i = 0; i < count; i++) { const p = new Particle(); p.y = Math.random() * canvas.height; particles.push(p); } }
+  function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); animationId = requestAnimationFrame(animateParticles); }
+  resizeCanvas(); initParticles(); animateParticles();
+  window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+
+  /* ============================================
+     CONFETTI EXPLOSION (เอฟเฟกต์พลุ)
+     ============================================ */
+  const confettiCanvas = document.getElementById('confettiCanvas');
+  const ctxC = confettiCanvas.getContext('2d');
+  let confettiParticles = [];
+  let confettiActive = false;
+
+  function resizeConfetti() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+  class Confetti {
+   constructor() {
+    this.x = window.innerWidth / 2 + (Math.random() - 0.5) * 100;
+    this.y = window.innerHeight / 2 + (Math.random() - 0.5) * 100;
+    this.vx = (Math.random() - 0.5) * 22;
+    this.vy = (Math.random() - 0.9) * 25 - 8;
+    this.size = Math.random() * 10 + 4;
+    this.color = ['#ff0000', '#ffcc00', '#00ccff', '#ff00ff', '#00ff00', '#ffffff', '#c9a84c', '#ff6600'][Math.floor(Math.random() * 8)];
+    this.rotation = Math.random() * 360;
+    this.rotationSpeed = (Math.random() - 0.5) * 12;
+    this.gravity = 0.4; this.opacity = 1; this.life = 1;
+   }
+   update() {
+    this.x += this.vx; this.vy += this.gravity; this.y += this.vy;
+    this.rotation += this.rotationSpeed; this.vx *= 0.99; this.life -= 0.006; this.opacity = Math.max(0, this.life);
+   }
+   draw() {
+    ctxC.save(); ctxC.translate(this.x, this.y); ctxC.rotate(this.rotation * Math.PI / 180); ctxC.globalAlpha = this.opacity;
+    ctxC.fillStyle = this.color; ctxC.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 0.6); ctxC.restore();
+   }
+  }
+  function launchConfetti() {
+   confettiParticles = []; for (let i = 0; i < 250; i++) confettiParticles.push(new Confetti());
+   confettiActive = true; animateConfetti();
+  }
+  function animateConfetti() {
+   if (!confettiActive) return; ctxC.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+   let alive = false; confettiParticles.forEach(p => { p.update(); p.draw(); if (p.opacity > 0) alive = true; });
+   if (alive) requestAnimationFrame(animateConfetti); else confettiActive = false;
+  }
+  resizeConfetti(); window.addEventListener('resize', resizeConfetti);
+
+  /* ============================================
+     INTERACTION LOGIC
+     ============================================ */
+  const splash = document.getElementById('splash-screen');
+  const openBtn = document.getElementById('open-btn');
+  const mainContent = document.getElementById('main-content');
+  const giftWrapper = document.querySelector('.gift-wrapper');
+
+  openBtn.addEventListener('click', () => {
+   // 1. กล่องหดลง & จางหาย
+   giftWrapper.style.transition = 'transform 0.6s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 0.5s';
+   giftWrapper.style.transform = 'scale(0.3) rotate(15deg)';
+   giftWrapper.style.opacity = '0';
+   openBtn.style.opacity = '0'; openBtn.style.pointerEvents = 'none';
+
+   // 2. จุดพลุ
+   launchConfetti();
+
+   // 3. ปิด Splash & เปิดการ์ดหลัก
+   setTimeout(() => {
+    splash.classList.add('hidden');
+    mainContent.classList.add('visible');
+    // Trigger reflow for smooth scroll
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+   }, 600);
+  });
+
+  // รองรับการกดที่กล่องของขวัญด้วย
+  giftWrapper.addEventListener('click', () => openBtn.click());
+
+  /* ============================================
+     COUNTDOWN TIMER
+     ============================================ */
+  // *** แก้ไขวันที่เป้าหมายที่นี่ ***
+  const targetDate = new Date('2026-07-15T00:00:00').getTime();
+  function updateCountdown() {
+   const now = new Date().getTime(); let distance = targetDate - now;
+   if (distance < 0) {
+    document.querySelector('.countdown-label').textContent = '🎉 Happy Birthday! 🎉';
+    document.querySelectorAll('.countdown-value').forEach((el, i) => ['🎂', '🎉', '✨', '🥂'][i]);
+    document.querySelectorAll('.countdown-separator').forEach(s => s.style.display = 'none'); return;
+   }
+   document.getElementById('days').textContent = String(Math.floor(distance / 86400000)).padStart(2, '0');
+   document.getElementById('hours').textContent = String(Math.floor((distance % 86400000) / 3600000)).padStart(2, '0');
+   document.getElementById('minutes').textContent = String(Math.floor((distance % 3600000) / 60000)).padStart(2, '0');
+   document.getElementById('seconds').textContent = String(Math.floor((distance % 60000) / 1000)).padStart(2, '0');
+  }
+  updateCountdown(); setInterval(updateCountdown, 1000);
+
+  /* ============================================
+     CAROUSEL
+     ============================================ */
+  const slides = document.querySelectorAll('.carousel-slide');
+  const indicatorsContainer = document.getElementById('carouselIndicators');
+  let currentSlide = 0; let carouselInterval;
+  slides.forEach((_, i) => {
+   const dot = document.createElement('div'); dot.classList.add('carousel-dot');
+   if (i === 0) dot.classList.add('active'); dot.addEventListener('click', () => goToSlide(i));
+   indicatorsContainer.appendChild(dot);
+  });
+  const dots = document.querySelectorAll('.carousel-dot');
+  function goToSlide(index) {
+   slides[currentSlide].classList.remove('active'); dots[currentSlide].classList.remove('active');
+   currentSlide = index; slides[currentSlide].classList.add('active'); dots[currentSlide].classList.add('active');
+   resetCarouselTimer();
+  }
+  function nextSlide() { goToSlide((currentSlide + 1) % slides.length); }
+  function resetCarouselTimer() { clearInterval(carouselInterval); carouselInterval = setInterval(nextSlide, 4000); }
+  resetCarouselTimer();
+
+  /* ============================================
+     MOUSE SPARKLE (Desktop)
+     ============================================ */
+  if (window.innerWidth > 768) {
+   document.addEventListener('mousemove', (e) => { if (Math.random() > 0.92) createMouseSparkle(e.clientX, e.clientY); });
+  }
+  function createMouseSparkle(x, y) {
+   const s = document.createElement('div');
+   s.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:4px;height:4px;background:radial-gradient(circle,rgba(245,230,163,0.9),rgba(201,168,76,0.3));border-radius:50%;pointer-events:none;z-index:9999;animation:mouseSparkle 0.8s ease-out forwards;`;
+   document.body.appendChild(s); setTimeout(() => s.remove(), 800);
+  }
+  const style = document.createElement('style');
+  style.textContent = `@keyframes mouseSparkle{0%{transform:scale(1);opacity:1}100%{transform:scale(0) translateY(-20px);opacity:0}}`;
+  document.head.appendChild(style);
+ </script>
+</body>
+
+</html>
